@@ -51,7 +51,9 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX elevatorMotor = new WPI_TalonSRX(11);
   WPI_VictorSPX elevatorMotorSlave1 = new WPI_VictorSPX(12);
   WPI_VictorSPX elevatorMotorSlave2 = new WPI_VictorSPX(13);
-  WPI_VictorSPX elevatorMotorSlave3 = new WPI_VictorSPX(14); 
+  WPI_VictorSPX elevatorMotorSlave3 = new WPI_VictorSPX(14);
+
+  WPI_TalonSRX boxMotor = new WPI_TalonSRX(15);
 
   DifferentialDrive drive = new DifferentialDrive(leftDriveMotor, rightDriveMotor);
   
@@ -146,6 +148,11 @@ public class Robot extends TimedRobot {
     elevatorMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
     elevatorMotor.enableCurrentLimit(true);
 
+    boxMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
+    boxMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
+    boxMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    boxMotor.enableCurrentLimit(true);
+
     leftDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
     leftDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 
@@ -170,6 +177,8 @@ public class Robot extends TimedRobot {
     compressor.stop();
     double throttle, turning;
     boolean quickTurn = false;
+
+    boxMotor.set(ControlMode.PercentOutput,0.3);
 
     //Driver Controls
     if(driverGamepad.getButtonHeld(XboxController.A_BUTTON)){
