@@ -55,16 +55,16 @@ public class Robot extends TimedRobot {
 
   DifferentialDrive drive = new DifferentialDrive(leftDriveMotor, rightDriveMotor);
   
-  public void intakePivotClimb() {
+  public void armClimb() {
     armMotor.selectProfileSlot(1,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB);    
   }
-  public void intakePivotIntake() {
+  public void armIntake() {
     armMotor.selectProfileSlot(1,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_INTAKE);    
   }
 
-  public void intakePivotUp() {
+  public void armUp() {
     armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_UP);    
   }
@@ -210,15 +210,15 @@ public class Robot extends TimedRobot {
     }
 
     if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
-      intakePivotUp();
+      armUp();
     }
 
     if(driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
-      intakePivotIntake();
+      armIntake();
     }
 
     if(driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){
-      intakePivotClimb();
+      armClimb();
     }
 
     if(Math.abs(driverGamepad.getRightY())>0.2 ) {
