@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import frc.util.XboxController;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -17,9 +18,12 @@ import edu.wpi.first.wpilibj.Compressor;
 public class Robot extends TimedRobot {
   Compressor compressor = new Compressor();
   public boolean highGear = false;
-  DoubleSolenoid shiftSolenoid = new DoubleSolenoid(1, 0);
-  public static DoubleSolenoid.Value SHIFT_HIGH = DoubleSolenoid.Value.kForward;
-  public static DoubleSolenoid.Value SHIFT_LOW = DoubleSolenoid.Value.kReverse;
+  Solenoid shiftSolenoid = new Solenoid(0);
+  Solenoid hatchDeploy = new Solenoid(1);
+  Solenoid hatchGrip = new Solenoid(2);
+  Solenoid cargoDeploy = new Solenoid(3);
+  public static boolean SHIFT_HIGH = true;
+  public static boolean SHIFT_LOW = false;
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
 
   public void shiftHigh() {
