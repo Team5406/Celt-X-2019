@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import frc.util.XboxController;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.Constants;
@@ -108,7 +107,7 @@ public class Robot extends TimedRobot {
     elevatorMotor.config_kI(0, 0, Constants.kTimeoutMs);
     elevatorMotor.config_kD(0, 0, Constants.kTimeoutMs);
 
-  //Elevator Down
+  //Elevator Climb
     elevatorMotor.selectProfileSlot(1,0);
     elevatorMotor.config_kF(1, 0.0525, Constants.kTimeoutMs);
     elevatorMotor.config_kP(1, 0.08, Constants.kTimeoutMs);
@@ -212,11 +211,11 @@ public class Robot extends TimedRobot {
     }
 
     if(driverGamepad.getButtonHeld(XboxController.X_BUTTON)){
-        intakeMotor.set(ControlMode.PercentOutput,0.4);
-        conveyorMotor.set(ControlMode.PercentOutput,0.4);
+        intakeMotor.set(ControlMode.PercentOutput,1.0);
+        conveyorMotor.set(ControlMode.PercentOutput,1.0);
     }else if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
-        intakeMotor.set(ControlMode.PercentOutput,-0.25);
-        conveyorMotor.set(ControlMode.PercentOutput,-0.25);
+        intakeMotor.set(ControlMode.PercentOutput,-1.0);
+        conveyorMotor.set(ControlMode.PercentOutput,-1.0);
     }else{
         intakeMotor.set(ControlMode.PercentOutput,0.0);
         conveyorMotor.set(ControlMode.PercentOutput,0.0);
