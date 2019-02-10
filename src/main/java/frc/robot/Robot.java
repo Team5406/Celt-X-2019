@@ -111,8 +111,8 @@ public class Robot extends TimedRobot {
     elevatorMotor.config_kI(1, 0, Constants.kTimeoutMs);
     elevatorMotor.config_kD(1, 0, Constants.kTimeoutMs);
   /* set acceleration and vcruise velocity - see documentation */
-    elevatorMotor.configMotionCruiseVelocity(30000, Constants.kTimeoutMs);
-    elevatorMotor.configMotionAcceleration(100000, Constants.kTimeoutMs);
+    elevatorMotor.configMotionCruiseVelocity(60000, Constants.kTimeoutMs);
+    elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
 
     armMotor.selectProfileSlot(0,0);
     armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
@@ -144,8 +144,8 @@ public class Robot extends TimedRobot {
     armMotor.enableCurrentLimit(true);
 
     elevatorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    elevatorMotor.configPeakCurrentLimit(50, Constants.kTimeoutMs);
+    elevatorMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     elevatorMotor.enableCurrentLimit(true);
 
     boxMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
