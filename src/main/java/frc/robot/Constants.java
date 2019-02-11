@@ -8,9 +8,9 @@ public final class Constants{
     public int elev1, level2, level3, cargoBoxLevel; //Encoder values
 
     public static int kTimeoutMs = 15;
-    public static int ARM_UP = 50;
-    public static int ARM_INTAKE = 2340;
-    public static int ARM_CLIMB = 3800;
+    public static int ARM_UP = -50;
+    public static int ARM_INTAKE = -2200;
+    public static int ARM_CLIMB = -3800;
     public static int ELEVATOR_LEVEL_1 = -1258;
     public static int ELEVATOR_LEVEL_2 = -25655;
     public static int ELEVATOR_LEVEL_3 = -52810;

@@ -61,11 +61,11 @@ public class Robot extends TimedRobot {
   DifferentialDrive drive = new DifferentialDrive(leftDriveMotor, rightDriveMotor);
   
   public void armClimb() {
-    armMotor.selectProfileSlot(1,0);
+    armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB);    
   }
   public void armIntake() {
-    armMotor.selectProfileSlot(1,0);
+    armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_INTAKE);    
   }
 
@@ -118,32 +118,33 @@ public class Robot extends TimedRobot {
     elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
 
     armMotor.selectProfileSlot(0,0);
-    armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
-    armMotor.config_kP(0, 0.01, Constants.kTimeoutMs);
+    armMotor.config_kF(0, 0.5, Constants.kTimeoutMs);
+    armMotor.config_kP(0, 0.6, Constants.kTimeoutMs);
     armMotor.config_kI(0, 0, Constants.kTimeoutMs);
     armMotor.config_kD(0, 0, Constants.kTimeoutMs);
-    
+    armMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
+
     armMotor.selectProfileSlot(1,0);
-    armMotor.config_kF(1, 1.2, Constants.kTimeoutMs);
-    armMotor.config_kP(1, 0.01, Constants.kTimeoutMs);
+    armMotor.config_kF(1, 0.5, Constants.kTimeoutMs);
+    armMotor.config_kP(1, 0.6, Constants.kTimeoutMs);
     armMotor.config_kI(1, 0, Constants.kTimeoutMs);
     armMotor.config_kD(1, 0, Constants.kTimeoutMs);
-    armMotor.configMotionCruiseVelocity(500, Constants.kTimeoutMs);
-    armMotor.configMotionAcceleration(500, Constants.kTimeoutMs);
+    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
 
     intakeMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    intakeMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
-    intakeMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    intakeMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
+    intakeMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     intakeMotor.enableCurrentLimit(true);
 
     conveyorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    conveyorMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
-    conveyorMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    conveyorMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
+    conveyorMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     conveyorMotor.enableCurrentLimit(true);
 
     armMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    armMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
-    armMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    armMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
+    armMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     armMotor.enableCurrentLimit(true);
 
     elevatorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
@@ -152,8 +153,8 @@ public class Robot extends TimedRobot {
     elevatorMotor.enableCurrentLimit(true);
 
     boxMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    boxMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
-    boxMotor.configPeakCurrentDuration(50, Constants.kTimeoutMs);
+    boxMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
+    boxMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     boxMotor.enableCurrentLimit(true);
 
     leftDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
@@ -173,6 +174,7 @@ public class Robot extends TimedRobot {
     leftDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
     rightDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
 
+    armMotor.setSensorPhase(true);
   }
 
   @Override
@@ -245,8 +247,8 @@ public class Robot extends TimedRobot {
 
     if(Math.abs(driverGamepad.getRightY())>0.2 ) {
       armMotor.set(ControlMode.PercentOutput, driverGamepad.getRightY());
-    }else{
-      armMotor.set(ControlMode.PercentOutput, 0);
+   /* }else{
+      armMotor.set(ControlMode.PercentOutput, 0);*/
 
     }
 
