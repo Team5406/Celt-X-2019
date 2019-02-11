@@ -18,9 +18,9 @@ public class Robot extends TimedRobot {
   Compressor compressor = new Compressor();
   public boolean highGear = false;
   Solenoid shiftSolenoid = new Solenoid(0);
-  Solenoid hatchDeploy = new Solenoid(1);
+  Solenoid cargoDeploy = new Solenoid(1);
   Solenoid hatchGrip = new Solenoid(2);
-  Solenoid cargoDeploy = new Solenoid(3);
+  Solenoid hatchDeploy = new Solenoid(3);
   public static boolean SHIFT_HIGH = true;
   public static boolean SHIFT_LOW = false;
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
@@ -177,11 +177,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    compressor.stop();
+   // compressor.stop();
     double throttle, turning;
     boolean quickTurn = false;
-
-    boxMotor.set(ControlMode.PercentOutput,0.3);
 
     //Driver Controls
     if(driverGamepad.getButtonHeld(XboxController.A_BUTTON)){
@@ -209,16 +207,28 @@ public class Robot extends TimedRobot {
     }else{
       shiftLow();
     }
-
-    if(driverGamepad.getButtonHeld(XboxController.X_BUTTON)){
+    if(operatorGamepad.getRightTriggerPressed()){
+        boxMotor.set(ControlMode.PercentOutput,0.8);
+        intakeMotor.set(ControlMode.PercentOutput,0.0);
+        conveyorMotor.set(ControlMode.PercentOutput,0.0);
+        cargoDeploy.set(true);
+    }else if(driverGamepad.getButtonHeld(XboxController.X_BUTTON)){
+        elevatorUp(Constants.ELEVATOR_START);
         intakeMotor.set(ControlMode.PercentOutput,1.0);
         conveyorMotor.set(ControlMode.PercentOutput,1.0);
+        boxMotor.set(ControlMode.PercentOutput,0.8);
+        cargoDeploy.set(false);
     }else if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
+        elevatorUp(Constants.ELEVATOR_START);
         intakeMotor.set(ControlMode.PercentOutput,-1.0);
         conveyorMotor.set(ControlMode.PercentOutput,-1.0);
+        boxMotor.set(ControlMode.PercentOutput,-0.5);
+        cargoDeploy.set(false);
     }else{
         intakeMotor.set(ControlMode.PercentOutput,0.0);
         conveyorMotor.set(ControlMode.PercentOutput,0.0);
+        boxMotor.set(ControlMode.PercentOutput,0.0);
+        cargoDeploy.set(false);
     }
 
     if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
