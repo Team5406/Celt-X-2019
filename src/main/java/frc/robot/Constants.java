@@ -9,12 +9,12 @@ public final class Constants{
 
     public static int kTimeoutMs = 15;
     public static int ARM_UP = -50;
-    public static int ARM_INTAKE = -2200;
+    public static int ARM_INTAKE = -2300;
     public static int ARM_CLIMB = -3800;
-    public static int ELEVATOR_LEVEL_1 = -1258;
-    public static int ELEVATOR_LEVEL_2 = -25655;
-    public static int ELEVATOR_LEVEL_3 = -52810;
-    public static int ELEVATOR_CARGO_BOX = -25655;
+    public static int ELEVATOR_LEVEL_1 = -800;
+    public static int ELEVATOR_LEVEL_2 = -27655;
+    public static int ELEVATOR_LEVEL_3 = -54810;
+    public static int ELEVATOR_CARGO_BOX = -12455;
     public static int ELEVATOR_CLIMB = 12000;
     public static int ELEVATOR_START = 0;
 
