@@ -18,9 +18,11 @@ public class Robot extends TimedRobot {
   Compressor compressor = new Compressor();
   public boolean highGear = false;
   Solenoid shiftSolenoid = new Solenoid(0);
-  Solenoid cargoDeploy = new Solenoid(1);
-  Solenoid hatchGrip = new Solenoid(2);
-  Solenoid hatchDeploy = new Solenoid(3);
+  Solenoid cargoDeploySolenoid = new Solenoid(1);
+  Solenoid hatchGripSolenoid = new Solenoid(3);
+  Solenoid hatchExtendSolenoid = new Solenoid(4);
+  Solenoid climbReleaseSolenoid = new Solenoid(2);
+
   public static boolean SHIFT_HIGH = true;
   public static boolean SHIFT_LOW = false;
   public static AHRS navX = new AHRS(SPI.Port.kMXP);
@@ -33,6 +35,28 @@ public class Robot extends TimedRobot {
     shiftSolenoid.set(SHIFT_LOW);
       highGear = false;
   }
+
+  public void climbRelease() {
+    climbReleaseSolenoid.set(true);
+  }
+
+  public void hatchExtend() {
+    hatchExtendSolenoid.set(true);
+  }
+  public void hatchRetract() {
+    hatchExtendSolenoid.set(false);
+  }
+
+  public void hatchGrip() {
+    hatchGripSolenoid.set(true);
+  }
+  public void hatchRelease() {
+    hatchGripSolenoid.set(false);
+  }
+
+
+
+  int climbCount = 0;
 
   XboxController driverGamepad = new XboxController(1);
   XboxController operatorGamepad = new XboxController(0);
@@ -118,8 +142,8 @@ public class Robot extends TimedRobot {
     elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
 
     armMotor.selectProfileSlot(0,0);
-    armMotor.config_kF(0, 0.5, Constants.kTimeoutMs);
-    armMotor.config_kP(0, 0.6, Constants.kTimeoutMs);
+    armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
+    armMotor.config_kP(0, 0.5, Constants.kTimeoutMs);
     armMotor.config_kI(0, 0, Constants.kTimeoutMs);
     armMotor.config_kD(0, 0, Constants.kTimeoutMs);
     armMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
@@ -178,6 +202,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void teleopInit(){
+    climbCount = 0;
+  }
+
+  @Override
   public void teleopPeriodic() {
    // compressor.stop();
     double throttle, turning;
@@ -213,24 +242,24 @@ public class Robot extends TimedRobot {
         boxMotor.set(ControlMode.PercentOutput,0.8);
         intakeMotor.set(ControlMode.PercentOutput,0.0);
         conveyorMotor.set(ControlMode.PercentOutput,0.0);
-        cargoDeploy.set(true);
+        cargoDeploySolenoid.set(true);
     }else if(driverGamepad.getButtonHeld(XboxController.X_BUTTON)){
         elevatorUp(Constants.ELEVATOR_START);
         intakeMotor.set(ControlMode.PercentOutput,1.0);
         conveyorMotor.set(ControlMode.PercentOutput,1.0);
         boxMotor.set(ControlMode.PercentOutput,0.8);
-        cargoDeploy.set(false);
+        cargoDeploySolenoid.set(false);
     }else if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
         elevatorUp(Constants.ELEVATOR_START);
         intakeMotor.set(ControlMode.PercentOutput,-1.0);
         conveyorMotor.set(ControlMode.PercentOutput,-1.0);
         boxMotor.set(ControlMode.PercentOutput,-0.5);
-        cargoDeploy.set(false);
+        cargoDeploySolenoid.set(false);
     }else{
         intakeMotor.set(ControlMode.PercentOutput,0.0);
         conveyorMotor.set(ControlMode.PercentOutput,0.0);
         boxMotor.set(ControlMode.PercentOutput,0.0);
-        cargoDeploy.set(false);
+        cargoDeploySolenoid.set(false);
     }
 
     if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
@@ -239,17 +268,21 @@ public class Robot extends TimedRobot {
 
     if(driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       armIntake();
+    }else if(Math.abs(driverGamepad.getRightY())>0.2 ) {
+      armMotor.set(ControlMode.PercentOutput, 0.5*driverGamepad.getRightY());
+    }else{
+      armUp();
     }
 
     if(driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){
+      climbCount++;
+      climbRelease();
       armClimb();
-    }
-
-    if(Math.abs(driverGamepad.getRightY())>0.2 ) {
-      armMotor.set(ControlMode.PercentOutput, driverGamepad.getRightY());
-   /* }else{
-      armMotor.set(ControlMode.PercentOutput, 0);*/
-
+      if(climbCount > 50){
+         elevatorClimb();
+      }
+    }else{
+      climbCount = 0;
     }
 
     //Operator Controls
@@ -268,11 +301,15 @@ public class Robot extends TimedRobot {
     if(operatorGamepad.getButtonHeld(XboxController.Y_BUTTON)){
       elevatorUp(Constants.ELEVATOR_LEVEL_3);
     }
-
-    if(operatorGamepad.getRightTriggerPressed()){
-      //Score Cargo
+    if(operatorGamepad.getLeftTriggerPressed()){
+      hatchExtend();
     }else{
-      //Stop Score Cargo
+      hatchRetract();
+    }
+    if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+      hatchGrip();
+    }else{
+      hatchRelease();
     }
 
   }
