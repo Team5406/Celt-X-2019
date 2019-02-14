@@ -110,29 +110,59 @@ public class Gamepieces extends Subsystems{
 
  }
 
-public void armClimb() {
+  public void armClimb() {
+    armMotor.configMotionCruiseVelocity(170, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(200, Constants.kTimeoutMs);
+    armMotor.selectProfileSlot(1,0);
+    armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_END);    
+  }
+  public void armClimbStart() {
+    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(0,0);
-    armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB);    
+    armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_START);    
+  }
+
+  public void armClimbMid() {
+    armMotor.configMotionCruiseVelocity(170, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(200, Constants.kTimeoutMs);
+    armMotor.selectProfileSlot(1,0);
+    armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_MID);    
   }
   public void armIntake() {
+    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_INTAKE);    
   }
 
   public void armUp() {
+    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_UP);    
   }
 
   public void elevatorUp(int pos) {
+    elevatorMotor.configMotionCruiseVelocity(50000, Constants.kTimeoutMs);
+    elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
     elevatorMotor.selectProfileSlot(0,0);
     elevatorMotor.set(ControlMode.MotionMagic, pos);
   }
 
   public void elevatorClimb() {
-    elevatorMotor.selectProfileSlot(0,0);
+    elevatorMotor.configMotionCruiseVelocity(1700, Constants.kTimeoutMs);
+    elevatorMotor.configMotionAcceleration(1700, Constants.kTimeoutMs);  
+    elevatorMotor.selectProfileSlot(1,0);
     elevatorMotor.set(ControlMode.MotionMagic, Constants.ELEVATOR_CLIMB);
   }
+  public void elevatorUnClimb() {
+    elevatorMotor.configMotionCruiseVelocity(1000, Constants.kTimeoutMs);
+    elevatorMotor.configMotionAcceleration(1000, Constants.kTimeoutMs);  
+    elevatorMotor.selectProfileSlot(1,0);
+    elevatorMotor.set(ControlMode.MotionMagic, 0);
+  }
+
   public void scoreCargo(){
     boxMotor.set(ControlMode.PercentOutput,0.8);
     intakeMotor.set(ControlMode.PercentOutput,0.0);
@@ -165,6 +195,11 @@ public void armClimb() {
   public void climbRelease() {
     climbReleaseSolenoid.set(true);
   }
+  public void climb() {
+    intakeMotor.set(ControlMode.PercentOutput,1.0);
+    armClimb();
+    elevatorClimb();
+  }
 
   public void hatchExtend() {
     hatchExtendSolenoid.set(true);
@@ -178,5 +213,11 @@ public void armClimb() {
   }
   public void hatchRelease() {
     hatchGripSolenoid.set(false);
+  }
+  public void compressorEnabled() {
+    compressor.start();
+  }
+  public void compressorDisabled() {
+    compressor.stop();
   }
 }

@@ -21,6 +21,7 @@ public class Robot extends TimedRobot {
   private Drive robotDrive = new Drive();
 
   int climbCount = 0;
+  boolean climbTried = false;
 
   XboxController driverGamepad = new XboxController(1);
   XboxController operatorGamepad = new XboxController(0);
@@ -31,12 +32,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit(){
+    gamepieceHandler.elevatorUp(Constants.ELEVATOR_START);
     climbCount = 0;
+    
   }
 
   @Override
   public void teleopPeriodic() {
-   // compressor.stop();
+
     
    robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
 
@@ -69,15 +72,21 @@ public class Robot extends TimedRobot {
 
     if(driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){
       climbCount++;
-      gamepieceHandler.climbRelease();
-      gamepieceHandler.armClimb();
+      climbTried = true;
+      gamepieceHandler.compressorDisabled();
+      gamepieceHandler.armClimbStart();
       if(climbCount > 50){
-         gamepieceHandler.elevatorClimb();
+        gamepieceHandler.climb();
       }
-    }else{
-      climbCount = 0;
+    }else if(climbTried && (driverGamepad.getButtonHeld(XboxController.START_BUTTON) || driverGamepad.getButtonHeld(XboxController.BACK_BUTTON))){
+      gamepieceHandler.armClimbMid();
+  }else{
+    climbCount = 0;
+    if (climbTried){
+     climbTried = false;
+     gamepieceHandler.elevatorUnClimb();
     }
-
+  }
     //Operator Controls
     if(operatorGamepad.getButtonHeld(XboxController.A_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.ELEVATOR_LEVEL_1);
