@@ -18,6 +18,12 @@ public final class Constants{
     public static int ELEVATOR_CLIMB = 12000;
     public static int ELEVATOR_START = 0;
 
+    // PCM Ports
+    public static int SHIFT_SOLENOID = 0;
+    public static int CARGO_DEPLOY_SOLENOID = 1;
+    public static int CLIMB_RELEASE_SOLENOID = 2;
+    public static int HATCH_GRIP_SOLENOID = 3;
+    public static int HATCH_EXTEND_SOLENOID = 4;
     
 
     public static AHRS navX = new AHRS(SPI.Port.kMXP);
@@ -27,6 +33,9 @@ public final class Constants{
         return ((-1*xboxControllerDeadband) < value && value < xboxControllerDeadband);
         }
 
+    public static boolean SHIFT_HIGH = true;
+    public static boolean SHIFT_LOW = false;
+    
     public Constants() {
     }
 }
