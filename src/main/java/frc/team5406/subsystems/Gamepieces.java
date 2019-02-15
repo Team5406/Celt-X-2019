@@ -220,4 +220,10 @@ public class Gamepieces extends Subsystems{
   public void compressorDisabled() {
     compressor.stop();
   }
+  public int armPosition(int elevatorPos) {
+  return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN) / Constants.ARM_LENGTH) * (4096 / 120));
+  }
+  public int elevatorPosition(int armPos) {
+  return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN))) / Constants.CLIMB_HEIGHT));
+  }
 }

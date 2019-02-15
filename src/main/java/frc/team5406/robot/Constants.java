@@ -21,8 +21,8 @@ public final class Constants{
     public static int ELEVATOR_CLIMB = -22000;
     public static int ELEVATOR_START = 1400;
     public static int CLIMB_HEIGHT = 19;
-    public static int ARM_LENGTH = 16.5;
-    public static int ARM_ORIGIN = 9.5;
+    public static double ARM_LENGTH = 16.5;
+    public static double ARM_ORIGIN = 9.5;
 
     // PCM Ports
     public static int SHIFT_SOLENOID = 0;
