@@ -39,27 +39,6 @@ public class Robot extends TimedRobot {
     }else{
       robotDrive.shiftLow();
     }
-    if(operatorGamepad.getRightTriggerPressed()){
-        gamepieceHandler.scoreCargo();
-    }else if(driverGamepad.getButtonHeld(XboxController.X_BUTTON)){
-        gamepieceHandler.intake();
-    }else if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
-        gamepieceHandler.reverseIntake();
-    }else{
-        gamepieceHandler.intakeDefault();
-    }
-
-    if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
-      gamepieceHandler.armUp();
-    }
-
-    if(driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
-      gamepieceHandler.armIntake();
-    }else if(Math.abs(driverGamepad.getRightY())>0.2 ) {
-      gamepieceHandler.manualArm(driverGamepad.getRightY());
-    }else{
-      gamepieceHandler.armUp();
-    }
 
     if(driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){
       climbCount++;
@@ -91,14 +70,34 @@ public class Robot extends TimedRobot {
       gamepieceHandler.elevatorUp(Constants.ELEVATOR_CARGO_BOX);
     }
 
+    if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
+      gamepieceHandler.armIntake();
+    }else if(Math.abs(operatorGamepad.getRightY())>0.2 ) {
+      gamepieceHandler.manualArm(operatorGamepad.getRightY());
+    }else{
+      gamepieceHandler.armUp();
+    }
+
+    if(operatorGamepad.getRightTriggerPressed()){
+      gamepieceHandler.scoreCargo();
+    }else if(operatorGamepad.getLeftY() > 0.3){
+      gamepieceHandler.intake();
+    }else if(operatorGamepad.getLeftY() < -0.3){
+      gamepieceHandler.reverseIntake();
+    }else{
+      gamepieceHandler.intakeDefault();
+    }
+
     if(operatorGamepad.getButtonHeld(XboxController.Y_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.ELEVATOR_LEVEL_3);
     }
+
     if(operatorGamepad.getLeftTriggerPressed()){
       gamepieceHandler.hatchExtend();
     }else{
       gamepieceHandler.hatchRetract();
     }
+
     if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       gamepieceHandler.hatchGrip();
     }else{
