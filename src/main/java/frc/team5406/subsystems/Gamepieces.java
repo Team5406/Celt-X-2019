@@ -42,10 +42,11 @@ public class Gamepieces extends Subsystems{
     
       //Elevator Up
     elevatorMotor.selectProfileSlot(0,0);
-    elevatorMotor.config_kF(0, 0.0525, Constants.kTimeoutMs);
-    elevatorMotor.config_kP(0, 0.1, Constants.kTimeoutMs);
+    elevatorMotor.config_kF(0, 0.03, Constants.kTimeoutMs);
+    elevatorMotor.config_kP(0, 0.4, Constants.kTimeoutMs);
     elevatorMotor.config_kI(0, 0, Constants.kTimeoutMs);
     elevatorMotor.config_kD(0, 0, Constants.kTimeoutMs);
+    elevatorMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
 
   //Elevator Climb
     elevatorMotor.selectProfileSlot(1,0);
@@ -221,9 +222,9 @@ public class Gamepieces extends Subsystems{
     compressor.stop();
   }
   public int armPosition(int elevatorPos) {
-  return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN) / Constants.ARM_LENGTH) * (4096 / 120));
+    return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN) / Constants.ARM_LENGTH) * (4096 / 120));
   }
   public int elevatorPosition(int armPos) {
-  return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN))) / Constants.CLIMB_HEIGHT));
+    return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN))) / Constants.CLIMB_HEIGHT));
   }
 }

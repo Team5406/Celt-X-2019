@@ -1,17 +1,8 @@
 package frc.team5406.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import frc.team5406.util.XboxController;
-import edu.wpi.first.wpilibj.Solenoid;
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
 import frc.team5406.robot.Constants;
-import edu.wpi.first.wpilibj.Compressor;
 import frc.team5406.subsystems.Gamepieces;
 import frc.team5406.subsystems.Drive;
 
