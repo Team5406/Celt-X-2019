@@ -161,7 +161,7 @@ public class Gamepieces extends Subsystems{
     elevatorMotor.configMotionCruiseVelocity(1000, Constants.kTimeoutMs);
     elevatorMotor.configMotionAcceleration(1000, Constants.kTimeoutMs);  
     elevatorMotor.selectProfileSlot(1,0);
-    elevatorMotor.set(ControlMode.MotionMagic, 0);
+    elevatorMotor.set(ControlMode.MotionMagic, Constants.ELEVATOR_START);
   }
 
   public void scoreCargo(){
@@ -202,7 +202,7 @@ public class Gamepieces extends Subsystems{
     climbReleaseSolenoid.set(true);
   }
   public void climb() {
-    intakeMotor.set(ControlMode.PercentOutput,1.0);
+    //intakeMotor.set(ControlMode.PercentOutput,1.0);
     elevatorClimb();
   }
 
@@ -226,8 +226,8 @@ public class Gamepieces extends Subsystems{
     compressor.stop();
   }
   public int armPosition(int elevatorPos) {
-    return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)) / Constants.ARM_LENGTH) * (4096 / 120));
-  }
+    return (int)Math.round(1.2*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*elevatorPos/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
+    }
   public int elevatorPosition(int armPos) {
     return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)))) / Constants.CLIMB_HEIGHT));
   }

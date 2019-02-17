@@ -23,12 +23,12 @@ public class Robot extends TimedRobot {
   class PeriodicRunnable implements java.lang.Runnable {
     public void run() { 
 
-      int armPos;
+      int elevPos;
   
         gamepieceHandler.armMotor.selectProfileSlot(0,0);
-        armPos = gamepieceHandler.getElevatorPos();
-        gamepieceHandler.armMotor.set(ControlMode.MotionMagic, gamepieceHandler.elevatorPosition(armPos));
-        System.out.println(gamepieceHandler.elevatorPosition(armPos));
+        elevPos = gamepieceHandler.getElevatorPos();
+        gamepieceHandler.armMotor.set(ControlMode.MotionMagic, gamepieceHandler.armPosition(elevPos));
+        System.out.println(elevPos + " " + gamepieceHandler.armPosition(elevPos));
     }
   }
   Notifier notifier = new Notifier(new PeriodicRunnable());
@@ -84,6 +84,8 @@ public class Robot extends TimedRobot {
     robotDrive.shiftLow();
   }else if(driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){ 
     gamepieceHandler.armIntake();
+  }else if (climbCount > 0){
+  }else if (driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){ 
   }else{
     gamepieceHandler.armUp();
   }
