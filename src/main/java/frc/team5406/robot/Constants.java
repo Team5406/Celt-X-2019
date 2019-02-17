@@ -13,10 +13,12 @@ public final class Constants{
     public static int ARM_CLIMB_START = -1400;
     public static int ARM_CLIMB_END = -4530;
     public static int ARM_CLIMB_MID = -3000;
-
-    public static int ELEVATOR_LEVEL_1 = -3000;
-    public static int ELEVATOR_LEVEL_2 = -17700;
-    public static int ELEVATOR_LEVEL_3 = -31300;
+    public static int CARGO_LEVEL_1 = -1800;
+    public static int CARGO_LEVEL_2 = -15634;
+    public static int CARGO_LEVEL_3 = -29500;
+    public static int HATCH_LEVEL_1 = -3000;
+    public static int HATCH_LEVEL_2 = -17700;
+    public static int HATCH_LEVEL_3 = -31300;
     public static int ELEVATOR_CARGO_BOX = -8000;
     public static int ELEVATOR_CLIMB = 22000;
     public static int ELEVATOR_START = -1400;
@@ -41,7 +43,7 @@ public final class Constants{
 
     public static boolean SHIFT_HIGH = true;
     public static boolean SHIFT_LOW = false;
-
+    
     public Constants() {
     }
 }

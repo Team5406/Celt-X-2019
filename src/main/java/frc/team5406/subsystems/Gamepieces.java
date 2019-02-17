@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Compressor;
 
 public class Gamepieces extends Subsystems{
 
-    WPI_TalonSRX armMotor = new WPI_TalonSRX(7);
+   public  WPI_TalonSRX armMotor = new WPI_TalonSRX(7);
     WPI_VictorSPX armSlave = new WPI_VictorSPX(8);
   
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
@@ -60,9 +60,9 @@ public class Gamepieces extends Subsystems{
 
     armMotor.selectProfileSlot(0,0);
     armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
-    armMotor.config_kP(0, 0.5, Constants.kTimeoutMs);
+    armMotor.config_kP(0, 0.4, Constants.kTimeoutMs);
     armMotor.config_kI(0, 0, Constants.kTimeoutMs);
-    armMotor.config_kD(0, 0, Constants.kTimeoutMs);
+    armMotor.config_kD(0, 0.0001, Constants.kTimeoutMs);
     armMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
 
     armMotor.selectProfileSlot(1,0);
@@ -193,12 +193,16 @@ public class Gamepieces extends Subsystems{
   public void manualArm(double joystickY){
     armMotor.set(ControlMode.PercentOutput, joystickY);
   }
+
+  public void manualElevator(double joystickY){
+    armMotor.set(ControlMode.PercentOutput, joystickY);
+  }
+
   public void climbRelease() {
     climbReleaseSolenoid.set(true);
   }
   public void climb() {
     intakeMotor.set(ControlMode.PercentOutput,1.0);
-    armClimb();
     elevatorClimb();
   }
 
@@ -222,9 +226,15 @@ public class Gamepieces extends Subsystems{
     compressor.stop();
   }
   public int armPosition(int elevatorPos) {
-    return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN) / Constants.ARM_LENGTH) * (4096 / 120));
+    return (int)Math.round((Math.PI / 180) * Math.asin((((Constants.CLIMB_HEIGHT * elevatorPos)/ Constants.ELEVATOR_CLIMB) - Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)) / Constants.ARM_LENGTH) * (4096 / 120));
   }
   public int elevatorPosition(int armPos) {
-    return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN))) / Constants.CLIMB_HEIGHT));
+    return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)))) / Constants.CLIMB_HEIGHT));
+  }
+  public int getElevatorPos(){
+    return elevatorMotor.getSelectedSensorPosition(0);
+  }
+  public int getArmPos(){
+    return armMotor.getSelectedSensorPosition(0);
   }
 }

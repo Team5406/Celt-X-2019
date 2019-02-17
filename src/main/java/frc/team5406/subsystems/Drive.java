@@ -2,7 +2,7 @@ package frc.team5406.subsystems;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+//import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import frc.team5406.robot.Constants;
@@ -49,9 +49,24 @@ public Drive(){
       highGear = false;
   }
 
-  public void cheesyDrive(double acc, double dec, double turn, boolean slow){
+  public void arcadeDrive(double speed, double turn, boolean slow){
 
-  double throttle, turning;
+    double precisionDriveX;
+    double precisionDriveY;
+  
+  if(slow){
+        precisionDriveY = 1*0.5;
+        precisionDriveX = 0.5;
+      }else{
+        precisionDriveY = 1;
+        precisionDriveX = 1;
+      }
+
+  drive.arcadeDrive(precisionDriveY*speed, precisionDriveX*turn);
+  }
+  /* public void cheesyDrive(double acc, double dec, double turn, boolean slow){
+
+   double throttle, turning;
     boolean quickTurn = false;
 
     //Driver Controls
@@ -75,5 +90,7 @@ public Drive(){
 
     drive.curvatureDrive(throttle, turning, quickTurn);
 
-    }
+    
+
+    } */
 }
