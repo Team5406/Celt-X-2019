@@ -10,18 +10,20 @@ import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+
 public class Gamepieces extends Subsystems{
 
+    //COMP BOT
     WPI_TalonSRX armMotor = new WPI_TalonSRX(7);
-    WPI_VictorSPX armSlave = new WPI_VictorSPX(8);
+    WPI_TalonSRX armSlave = new WPI_TalonSRX(8);
   
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
     WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(10);
   
     WPI_TalonSRX elevatorMotor = new WPI_TalonSRX(11);
-    WPI_VictorSPX elevatorMotorSlave1 = new WPI_VictorSPX(12);
-    WPI_VictorSPX elevatorMotorSlave2 = new WPI_VictorSPX(13);
-    WPI_VictorSPX elevatorMotorSlave3 = new WPI_VictorSPX(14);
+    WPI_TalonSRX elevatorMotorSlave1 = new WPI_TalonSRX(12);
+    WPI_TalonSRX elevatorMotorSlave2 = new WPI_TalonSRX(13);
+    WPI_TalonSRX elevatorMotorSlave3 = new WPI_TalonSRX(14);
   
     WPI_TalonSRX boxMotor = new WPI_TalonSRX(15);
 
@@ -34,8 +36,9 @@ public class Gamepieces extends Subsystems{
     Solenoid climbReleaseSolenoid = new Solenoid(Constants.CLIMB_RELEASE_SOLENOID);
 
     public Gamepieces(){
-    elevatorMotorSlave2.setInverted(true);
-    elevatorMotorSlave3.setInverted(true);
+    conveyorMotor.setInverted(true); //Comp Bot
+    elevatorMotor.setInverted(true); //Comp Bot
+    elevatorMotorSlave1.setInverted(true); //Comp Bot
     armSlave.setInverted(true);
 
     armSlave.follow(armMotor);
@@ -53,6 +56,7 @@ public class Gamepieces extends Subsystems{
     elevatorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     elevatorMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
     elevatorMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
 
   //Elevator Climb
     elevatorMotor.selectProfileSlot(1,0);
@@ -130,6 +134,7 @@ public class Gamepieces extends Subsystems{
     elevatorMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
 
     armMotor.setSensorPhase(true);
+    elevatorMotor.setSensorPhase(true);  //Comp Bot
 
  }
 

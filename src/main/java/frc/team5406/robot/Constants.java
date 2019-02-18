@@ -5,17 +5,18 @@ import edu.wpi.first.wpilibj.SPI;
 
 public final class Constants{
 
-    public int elev1, level2, level3, cargoBoxLevel; //Encoder values
-
+    public static boolean PRACTICE_BOT = false;
+    public static int BALL_SENSOR = 0;
     public static int kTimeoutMs = 15;
-    public static int ARM_UP = -50;
-    public static int ARM_INTAKE = -2400;
-    public static int ARM_CLIMB_START = -1400;
+    public static int ARM_UP = 50;
+    public static int ARM_INTAKE = 2400;
+    public static int ARM_CLIMB_START = 1400;
     public static double ARM_CLIMB_START_HEIGHT = 20.5;
     public static double ARM_CLIMB_START_ANGLE = 83;
 
-    public static int ARM_CLIMB_END = -4530;
-    public static int ARM_CLIMB_MID = -3000;
+    public static int ARM_CLIMB_END = 4530;
+    public static int ARM_CLIMB_MID = 3000;
+
     public static int CARGO_LEVEL_1 = -1800;
     public static int CARGO_LEVEL_2 = -15634;
     public static int CARGO_LEVEL_3 = -29500;

@@ -1,22 +1,17 @@
 package frc.team5406.subsystems;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.ctre.phoenix.motorcontrol.can.*;
-//import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Drive extends Subsystems{
 
-  WPI_TalonSRX leftDriveMotor = new WPI_TalonSRX(1);
-  WPI_VictorSPX leftDriveSlave1 = new WPI_VictorSPX(2);
-  WPI_VictorSPX leftDriveSlave2 = new WPI_VictorSPX(3);
-
-  WPI_TalonSRX rightDriveMotor = new WPI_TalonSRX(4);
-  WPI_VictorSPX rightDriveSlave1= new WPI_VictorSPX(5);
-  WPI_VictorSPX rightDriveSlave2 = new WPI_VictorSPX(6);
+  CANSparkMax leftDriveMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax leftDriveSlave1 = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax rightDriveMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax rightDriveSlave1 = new CANSparkMax(4, MotorType.kBrushless);
 
   Solenoid shiftSolenoid = new Solenoid(Constants.SHIFT_SOLENOID);
   DifferentialDrive drive = new DifferentialDrive(leftDriveMotor, rightDriveMotor);
@@ -25,19 +20,14 @@ public class Drive extends Subsystems{
 
 
 public Drive(){
-    leftDriveSlave1.follow(leftDriveMotor);
-    leftDriveSlave2.follow(leftDriveMotor);
-    rightDriveSlave1.follow(rightDriveMotor);
-    rightDriveSlave2.follow(rightDriveMotor);
-  
-    leftDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
-    leftDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
-  
-    rightDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
-    rightDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
-  
-    leftDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
-    rightDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
+
+  leftDriveSlave1.follow(leftDriveMotor);
+  rightDriveSlave1.follow(rightDriveMotor);
+  leftDriveMotor.setSmartCurrentLimit(80);
+  leftDriveSlave1.setSmartCurrentLimit(80);
+  rightDriveMotor.setSmartCurrentLimit(80);
+  rightDriveSlave1.setSmartCurrentLimit(80);
+
 }
 
   public void shiftHigh() {
