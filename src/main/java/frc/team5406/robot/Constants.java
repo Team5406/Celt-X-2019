@@ -5,8 +5,9 @@ import edu.wpi.first.wpilibj.SPI;
 
 public final class Constants{
 
-    public int elev1, level2, level3, cargoBoxLevel; //Encoder values
-
+    public static boolean PRACTICE_BOT = false;
+    public static int BALL_SENSOR = 0;
+    
     public static int kTimeoutMs = 15;
     public static int ARM_UP = -50;
     public static int ARM_INTAKE = -2400;
