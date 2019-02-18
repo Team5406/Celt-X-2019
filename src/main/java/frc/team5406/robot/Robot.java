@@ -6,7 +6,6 @@ import frc.team5406.robot.Constants;
 import frc.team5406.subsystems.Gamepieces;
 import frc.team5406.subsystems.Drive;
 import edu.wpi.first.wpilibj.Notifier;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Robot extends TimedRobot {
 
@@ -22,13 +21,7 @@ public class Robot extends TimedRobot {
 
   class PeriodicRunnable implements java.lang.Runnable {
     public void run() { 
-
-      int elevPos;
-  
-        gamepieceHandler.armMotor.selectProfileSlot(0,0);
-        elevPos = gamepieceHandler.getElevatorPos();
-        gamepieceHandler.armMotor.set(ControlMode.MotionMagic, gamepieceHandler.armPosition(elevPos));
-        System.out.println(elevPos + " " + gamepieceHandler.armPosition(elevPos));
+      gamepieceHandler.armClimbRunnable(gamepieceHandler.getElevatorPos());
     }
   }
   Notifier notifier = new Notifier(new PeriodicRunnable());

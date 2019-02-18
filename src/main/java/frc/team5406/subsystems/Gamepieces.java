@@ -4,13 +4,15 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Gamepieces extends Subsystems{
 
-   public  WPI_TalonSRX armMotor = new WPI_TalonSRX(7);
+    WPI_TalonSRX armMotor = new WPI_TalonSRX(7);
     WPI_VictorSPX armSlave = new WPI_VictorSPX(8);
   
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
@@ -23,6 +25,7 @@ public class Gamepieces extends Subsystems{
   
     WPI_TalonSRX boxMotor = new WPI_TalonSRX(15);
 
+    DigitalInput ballSensor = new DigitalInput(Constants.BALL_SENSOR);
     Compressor compressor = new Compressor();
 
     Solenoid cargoDeploySolenoid = new Solenoid(Constants.CARGO_DEPLOY_SOLENOID);
@@ -47,6 +50,9 @@ public class Gamepieces extends Subsystems{
     elevatorMotor.config_kI(0, 0, Constants.kTimeoutMs);
     elevatorMotor.config_kD(0, 0, Constants.kTimeoutMs);
     elevatorMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
+    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
 
   //Elevator Climb
     elevatorMotor.selectProfileSlot(1,0);
@@ -64,6 +70,10 @@ public class Gamepieces extends Subsystems{
     armMotor.config_kI(0, 0, Constants.kTimeoutMs);
     armMotor.config_kD(0, 0.0001, Constants.kTimeoutMs);
     armMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
+    armMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    armMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    armMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
 
     armMotor.selectProfileSlot(1,0);
     armMotor.config_kF(1, 0.5, Constants.kTimeoutMs);
@@ -77,11 +87,19 @@ public class Gamepieces extends Subsystems{
     intakeMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
     intakeMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     intakeMotor.enableCurrentLimit(true);
+    intakeMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    intakeMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    intakeMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
 
     conveyorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     conveyorMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
     conveyorMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     conveyorMotor.enableCurrentLimit(true);
+    conveyorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    conveyorMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    conveyorMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
 
     armMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     armMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
@@ -97,11 +115,15 @@ public class Gamepieces extends Subsystems{
     boxMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
     boxMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     boxMotor.enableCurrentLimit(true);
+    boxMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    boxMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    boxMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
 
-    armMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
+
+    armMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 
-    elevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
+    elevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 
     armMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
@@ -111,6 +133,10 @@ public class Gamepieces extends Subsystems{
 
  }
 
+  public void armClimbRunnable(int elevPos) {
+    armMotor.selectProfileSlot(1,0);
+    armMotor.set(ControlMode.MotionMagic, armPosition(elevPos));
+  } 
   public void armClimb() {
     armMotor.configMotionCruiseVelocity(170, Constants.kTimeoutMs);
     armMotor.configMotionAcceleration(200, Constants.kTimeoutMs);
@@ -236,5 +262,9 @@ public class Gamepieces extends Subsystems{
   }
   public int getArmPos(){
     return armMotor.getSelectedSensorPosition(0);
+  }
+
+  public boolean haveBall(){
+    return !ballSensor.get();
   }
 }
