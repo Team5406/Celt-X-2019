@@ -143,8 +143,22 @@ public class Gamepieces extends Subsystems{
     armMotor.set(ControlMode.MotionMagic, armPosition(elevPos));
   } 
   public void armClimb() {
+    armMotor.config_kF(1, 0.5, Constants.kTimeoutMs);
+    armMotor.config_kP(1, 0.6, Constants.kTimeoutMs);
+    armMotor.config_kI(1, 0, Constants.kTimeoutMs);
+    armMotor.config_kD(1, 0, Constants.kTimeoutMs);
     armMotor.configMotionCruiseVelocity(170, Constants.kTimeoutMs);
     armMotor.configMotionAcceleration(200, Constants.kTimeoutMs);
+    armMotor.selectProfileSlot(1,0);
+    armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_END);    
+  }
+  public void armClimbLevel2() {
+    armMotor.config_kF(1, 0.2, Constants.kTimeoutMs);
+    armMotor.config_kP(1, 0.9, Constants.kTimeoutMs);
+    armMotor.config_kI(1, 0, Constants.kTimeoutMs);
+    armMotor.config_kD(1, 0.01, Constants.kTimeoutMs);
+    armMotor.configMotionCruiseVelocity(1700, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(2000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(1,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_END);    
   }
@@ -208,6 +222,10 @@ public class Gamepieces extends Subsystems{
     boxMotor.set(ControlMode.PercentOutput,0.8);
     cargoDeploySolenoid.set(false);
   }
+  public void intakeClimb(){
+    intakeMotor.set(ControlMode.PercentOutput,1.0);
+  }
+
   public void reverseIntake(){
     elevatorUp(Constants.ELEVATOR_START);
     intakeMotor.set(ControlMode.PercentOutput,-1.0);
@@ -226,7 +244,7 @@ public class Gamepieces extends Subsystems{
   }
 
   public void manualElevator(double joystickY){
-    armMotor.set(ControlMode.PercentOutput, joystickY);
+    elevatorMotor.set(ControlMode.PercentOutput, 0.3*joystickY);
   }
 
   public void climbRelease() {
@@ -257,7 +275,7 @@ public class Gamepieces extends Subsystems{
     compressor.stop();
   }
   public int armPosition(int elevatorPos) {
-    return (int)Math.round(1.2*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*elevatorPos/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
+    return (int)Math.round(1.4*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*elevatorPos/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
     }
   public int elevatorPosition(int armPos) {
     return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)))) / Constants.CLIMB_HEIGHT));

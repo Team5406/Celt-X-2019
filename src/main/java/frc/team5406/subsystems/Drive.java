@@ -54,18 +54,15 @@ public Drive(){
 
   drive.arcadeDrive(precisionDriveY*speed, precisionDriveX*turn);
   }
-  /* public void cheesyDrive(double acc, double dec, double turn, boolean slow){
+  
+  public void cheesyDrive(double throttle, double turning, boolean slow){
 
-   double throttle, turning;
     boolean quickTurn = false;
 
     //Driver Controls
     if(slow){
-      throttle = (acc - dec)*0.5;
-      turning = turn*0.5;
-    }else{
-      throttle = acc - dec;
-      turning = turn;
+      throttle *= 0.5;
+      turning *= 0.5;
     }
     
     if(Math.abs(turning) < 0.05){
@@ -80,7 +77,5 @@ public Drive(){
 
     drive.curvatureDrive(throttle, turning, quickTurn);
 
-    
-
-    } */
+    }
 }
