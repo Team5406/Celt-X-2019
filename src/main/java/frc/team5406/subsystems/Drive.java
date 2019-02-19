@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -30,12 +31,18 @@ public Drive(){
     rightDriveSlave1.follow(rightDriveMotor);
     rightDriveSlave2.follow(rightDriveMotor);
   
-    leftDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
+    leftDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     leftDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
-  
-    rightDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, Constants.kTimeoutMs);
+    leftDriveMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    leftDriveMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    leftDriveMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
+    rightDriveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     rightDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
-  
+    rightDriveMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+    rightDriveMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    rightDriveMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+
     leftDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
     rightDriveMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
 }
@@ -64,18 +71,15 @@ public Drive(){
 
   drive.arcadeDrive(precisionDriveY*speed, precisionDriveX*turn);
   }
-  /* public void cheesyDrive(double acc, double dec, double turn, boolean slow){
+  
+  public void cheesyDrive(double throttle, double turning, boolean slow){
 
-   double throttle, turning;
     boolean quickTurn = false;
 
     //Driver Controls
     if(slow){
-      throttle = (acc - dec)*0.5;
-      turning = turn*0.5;
-    }else{
-      throttle = acc - dec;
-      turning = turn;
+      throttle *= 0.5;
+      turning *= 0.5;
     }
     
     if(Math.abs(turning) < 0.05){
@@ -90,7 +94,5 @@ public Drive(){
 
     drive.curvatureDrive(throttle, turning, quickTurn);
 
-    
-
-    } */
+    }
 }

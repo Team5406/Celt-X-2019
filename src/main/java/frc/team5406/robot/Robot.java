@@ -2,6 +2,7 @@ package frc.team5406.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team5406.util.XboxController;
+import frc.team5406.util.XboxController.DirectionPad;
 import frc.team5406.robot.Constants;
 import frc.team5406.subsystems.Gamepieces;
 import frc.team5406.subsystems.Drive;
@@ -42,8 +43,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    robotDrive.arcadeDrive(driverGamepad.getLeftY(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
-   /*robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON)); */
+    robotDrive.arcadeDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+    //robotDrive.cheesyDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+    //robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
 
     if(driverGamepad.getButtonHeld(XboxController.B_BUTTON)){
       robotDrive.shiftHigh();
@@ -51,7 +53,7 @@ public class Robot extends TimedRobot {
       robotDrive.shiftLow();
     }
 
-    if(driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){
+    if(operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       climbCount++;
       climbTried = true;
       gamepieceHandler.compressorDisabled();
@@ -59,14 +61,18 @@ public class Robot extends TimedRobot {
       if(climbCount > 50){
         gamepieceHandler.climb();
         notifier.startPeriodic(0.005);
+        /*if(climbCount > 200){
+          gamepieceHandler.intakeClimb();
+        }*/
       }
-    }else if(climbTried && (driverGamepad.getButtonHeld(XboxController.START_BUTTON) || driverGamepad.getButtonHeld(XboxController.BACK_BUTTON))){
+    }else if(climbTried && (operatorGamepad.getButtonHeld(XboxController.START_BUTTON) || operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER))){
       gamepieceHandler.armClimbMid();
       notifier.stop();
   }else{
     climbCount = 0;
     if (climbTried){
      climbTried = false;
+     //gamepieceHandler.intakeDefault();
      notifier.stop();
      gamepieceHandler.elevatorUnClimb();
     }
@@ -75,34 +81,40 @@ public class Robot extends TimedRobot {
   if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
     gamepieceHandler.armClimb();
     robotDrive.shiftLow();
-  }else if(driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){ 
-    gamepieceHandler.armIntake();
   }else if (climbCount > 0){
-  }else if (driverGamepad.getButtonHeld(XboxController.START_BUTTON) && driverGamepad.getButtonHeld(XboxController.BACK_BUTTON)){ 
+  }else if (operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){ 
+  }else if (operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+  }else if (driverGamepad.getRightTriggerPressed() || driverGamepad.getLeftTriggerPressed()){
+  }else if (operatorGamepad.getDirectionPad() == DirectionPad.UP && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+    gamepieceHandler.manualArm(0.3);
+  }else if (operatorGamepad.getDirectionPad() == DirectionPad.DOWN && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+    gamepieceHandler.manualArm(-0.3);
   }else{
     gamepieceHandler.armUp();
   }
 
-  if(Math.abs(driverGamepad.getRightY())>0.2 ) {
-    gamepieceHandler.manualArm(driverGamepad.getRightY());
-  }
+
+  /*if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getRightY())>0.2 ) {
+    gamepieceHandler.manualArm(operatorGamepad.getRightY());
+  }*/
+
   
     //Operator Controls
    
-    if(operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.A_BUTTON)){
+    if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.A_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.CARGO_LEVEL_1); 
     }else if(operatorGamepad.getButtonHeld(XboxController.A_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.HATCH_LEVEL_1);
     }
 
-    if(operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.B_BUTTON)){
+    if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.B_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.CARGO_LEVEL_2);
     }
     else if(operatorGamepad.getButtonHeld(XboxController.B_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.HATCH_LEVEL_2);
     }
     
-   if(operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.Y_BUTTON)){
+   if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.Y_BUTTON)){
       gamepieceHandler.elevatorUp(Constants.CARGO_LEVEL_3);
     }
    else if(operatorGamepad.getButtonHeld(XboxController.Y_BUTTON)){
@@ -113,7 +125,7 @@ public class Robot extends TimedRobot {
       gamepieceHandler.elevatorUp(Constants.ELEVATOR_CARGO_BOX);
     }
 
-    if(Math.abs(operatorGamepad.getRightY())>0.2 ) {
+    if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getRightY())>0.2 ) {
       gamepieceHandler.manualElevator(operatorGamepad.getRightY());
      }
 
@@ -125,12 +137,25 @@ public class Robot extends TimedRobot {
       gamepieceHandler.armUp();
     }*/
 
-    if(operatorGamepad.getRightTriggerPressed()){
+    if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
       gamepieceHandler.scoreCargo();
     }else if(driverGamepad.getRightTriggerPressed()){
       gamepieceHandler.intake();
+      gamepieceHandler.armIntake();
     }else if(driverGamepad.getLeftTriggerPressed()){
       gamepieceHandler.reverseIntake();
+      gamepieceHandler.armIntake();
+    }else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON)  ) {
+      gamepieceHandler.armClimbLevel2();
+    }else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getLeftY())>0.2 ) {
+      if(climbCount > 0){
+        gamepieceHandler.intakeClimb();
+      }else{
+        gamepieceHandler.intake();
+      }
+      } else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getLeftY())>0.2 ) {
+        gamepieceHandler.reverseIntake();
+    } else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.START_BUTTON) ) {
     }else{
       gamepieceHandler.intakeDefault();
     }
