@@ -14,7 +14,9 @@ public class Robot extends TimedRobot {
   private Drive robotDrive = new Drive();
 
   int climbCount = 0;
+  int climbDriveCount = 0;
   boolean climbTried = false;
+  int climbDrive = 0;
 
   XboxController driverGamepad = new XboxController(1);
   XboxController operatorGamepad = new XboxController(0);
@@ -23,6 +25,7 @@ public class Robot extends TimedRobot {
   class PeriodicRunnable implements java.lang.Runnable {
     public void run() { 
       gamepieceHandler.armClimbRunnable(gamepieceHandler.getElevatorPos());
+      System.out.println(-1*gamepieceHandler.armPosition(gamepieceHandler.getElevatorPos()));
     }
   }
   Notifier notifier = new Notifier(new PeriodicRunnable());
@@ -43,10 +46,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    if( Math.abs(driverGamepad.getLeftY()) > 0.05 ||  !climbTried ){
     robotDrive.arcadeDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
     //robotDrive.cheesyDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
     //robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
-
+    }
     if(driverGamepad.getButtonHeld(XboxController.B_BUTTON)){
       robotDrive.shiftHigh();
     }else{
@@ -56,25 +60,45 @@ public class Robot extends TimedRobot {
     if(operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       climbCount++;
       climbTried = true;
-      gamepieceHandler.compressorDisabled();
-      gamepieceHandler.armClimbStart();
-      if(climbCount > 50){
+      if (climbCount < 10){
+        gamepieceHandler.elevatorUp(0);
+        gamepieceHandler.armClimbStart();
+      }else if(climbCount > 50){
         gamepieceHandler.climb();
         notifier.startPeriodic(0.005);
-        /*if(climbCount > 200){
+        if(gamepieceHandler.getElevatorPos() > 0.7*Constants.ELEVATOR_CLIMB){
           gamepieceHandler.intakeClimb();
-        }*/
+          robotDrive.shiftLow();
+          robotDrive.arcadeDrive(-0.4, 0, false);
+          climbDriveCount++;
+        }
+        if(climbDriveCount > 50){
+          gamepieceHandler.armClimbMid();
+          notifier.stop();    
+        }
+        if(climbDriveCount > 200){
+          robotDrive.arcadeDrive(0, 0, true);
+        }
+
       }
     }else if(climbTried && (operatorGamepad.getButtonHeld(XboxController.START_BUTTON) || operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER))){
       gamepieceHandler.armClimbMid();
+      robotDrive.arcadeDrive(-0.40, 0, false);
       notifier.stop();
   }else{
     climbCount = 0;
     if (climbTried){
-     climbTried = false;
+      climbDrive ++;
+     //climbTried = false;
      //gamepieceHandler.intakeDefault();
      notifier.stop();
      gamepieceHandler.elevatorUnClimb();
+     robotDrive.arcadeDrive(-0.40, 0, false);
+    }
+    if(climbTried && climbDrive > 100 ){
+      climbTried = false;
+      climbDrive = 0;
+      robotDrive.arcadeDrive(0, 0, false);
     }
   }
 
@@ -140,8 +164,12 @@ public class Robot extends TimedRobot {
     if(driverGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
       gamepieceHandler.scoreCargo();
     }else if(driverGamepad.getRightTriggerPressed()){
-      gamepieceHandler.intake();
-      gamepieceHandler.armIntake();
+      if(!gamepieceHandler.haveBall()){
+        gamepieceHandler.intake();
+        gamepieceHandler.armIntake();
+      }else{
+        gamepieceHandler.intakeDefault();
+      }
     }else if(driverGamepad.getLeftTriggerPressed()){
       gamepieceHandler.reverseIntake();
       gamepieceHandler.armIntake();
@@ -153,9 +181,9 @@ public class Robot extends TimedRobot {
       }else{
         gamepieceHandler.intake();
       }
-      } else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getLeftY())>0.2 ) {
-        gamepieceHandler.reverseIntake();
-    } else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.START_BUTTON) ) {
+    }else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && Math.abs(operatorGamepad.getLeftY())>0.2 ) {
+      gamepieceHandler.reverseIntake();
+    }else if(operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER) && operatorGamepad.getButtonHeld(XboxController.START_BUTTON) ) {
     }else{
       gamepieceHandler.intakeDefault();
     }
