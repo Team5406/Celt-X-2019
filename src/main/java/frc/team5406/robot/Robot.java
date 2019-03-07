@@ -45,13 +45,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+   // System.out.println(gamepieceHandler.getElevatorPos());
 
     if( Math.abs(driverGamepad.getLeftY()) > 0.05 ||  !climbTried ){
     robotDrive.arcadeDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
     //robotDrive.cheesyDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
     //robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
     }
-    if(driverGamepad.getButtonHeld(XboxController.B_BUTTON)){
+    if(driverGamepad.getButtonHeld(XboxController.B_BUTTON) || driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       robotDrive.shiftHigh();
     }else{
       robotDrive.shiftLow();

@@ -8,7 +8,7 @@ public final class Constants{
     public static boolean PRACTICE_BOT = false;
     public static int BALL_SENSOR = 0;
     
-    public static int kTimeoutMs = 15;
+    public static int kTimeoutMs = 20;
     public static int ARM_UP = -50;
     public static int ARM_INTAKE = -2400;
     public static int ARM_CLIMB_START = -1400;
@@ -27,16 +27,16 @@ public final class Constants{
     public static int ELEVATOR_CARGO_BOX = -8000;
     public static int ELEVATOR_CLIMB = 22000;
     public static int ELEVATOR_START = -1400;*/
-    public static int CARGO_LEVEL_1 = -1620;
-    public static int CARGO_LEVEL_2 = -15600;
-    public static int CARGO_LEVEL_3 = -28025;
-    public static int HATCH_LEVEL_1 = -4920;
-    public static int HATCH_LEVEL_2 = -17900;
-    public static int HATCH_LEVEL_3 = -29735;
+    public static double CARGO_LEVEL_1 = 4.74609375;
+    public static double CARGO_LEVEL_2 = 45.703125;
+    public static double CARGO_LEVEL_3 = 82.1044921875;
+    public static double HATCH_LEVEL_1 = 14.4140625;
+    public static double HATCH_LEVEL_2 = 52.44140625;
+    public static double HATCH_LEVEL_3 = 87.1142578125;
     
-    public static int ELEVATOR_CARGO_BOX = -8300;
-    public static int ELEVATOR_CLIMB = 22000;
-    public static int ELEVATOR_START = -1260;
+    public static double ELEVATOR_CARGO_BOX = 24.31640625;
+    public static double ELEVATOR_CLIMB = -64.453125;
+    public static double ELEVATOR_START = 3.69048;
     public static double CLIMB_HEIGHT = -19;
     public static double ARM_LENGTH = 16.5;
     public static double ARM_ORIGIN = 9.5;

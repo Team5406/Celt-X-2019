@@ -5,6 +5,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Compressor;
@@ -18,63 +23,67 @@ public class Gamepieces extends Subsystems{
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
     WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(10);
   
-    WPI_TalonSRX elevatorMotor = new WPI_TalonSRX(11);
-    WPI_VictorSPX elevatorMotorSlave1 = new WPI_VictorSPX(12);
-    WPI_VictorSPX elevatorMotorSlave2 = new WPI_VictorSPX(13);
-    WPI_VictorSPX elevatorMotorSlave3 = new WPI_VictorSPX(14);
+    CANSparkMax elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
+    CANSparkMax elevatorMotorSlave1 = new CANSparkMax(12, MotorType.kBrushless);
   
     WPI_TalonSRX boxMotor = new WPI_TalonSRX(15);
 
     DigitalInput ballSensor = new DigitalInput(Constants.BALL_SENSOR);
     Compressor compressor = new Compressor();
 
+    CANEncoder elevatorEncoder;
+
+    CANPIDController elevatorPID;
+    double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
+
+    
     Solenoid cargoDeploySolenoid = new Solenoid(Constants.CARGO_DEPLOY_SOLENOID);
     Solenoid hatchGripSolenoid = new Solenoid(Constants.HATCH_GRIP_SOLENOID);
     Solenoid hatchExtendSolenoid = new Solenoid(Constants.HATCH_EXTEND_SOLENOID);
     Solenoid climbReleaseSolenoid = new Solenoid(Constants.CLIMB_RELEASE_SOLENOID);
 
     public Gamepieces(){
-    elevatorMotorSlave2.setInverted(true);
-    elevatorMotorSlave3.setInverted(true);
+
+
     armSlave.setInverted(true);
 
     armSlave.follow(armMotor);
-    elevatorMotorSlave1.follow(elevatorMotor);
-    elevatorMotorSlave2.follow(elevatorMotor);
-    elevatorMotorSlave3.follow(elevatorMotor);
-    
-      //Elevator Up
-    elevatorMotor.selectProfileSlot(0,0);
-    elevatorMotor.config_kF(0, 0.03, Constants.kTimeoutMs);
-    elevatorMotor.config_kP(0, 0.4, Constants.kTimeoutMs);
-    elevatorMotor.config_kI(0, 0, Constants.kTimeoutMs);
-    elevatorMotor.config_kD(0, 0, Constants.kTimeoutMs);
-    elevatorMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
-    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
-    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-    elevatorMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+    elevatorMotorSlave1.follow(elevatorMotor, true);
 
-  //Elevator Climb
-    elevatorMotor.selectProfileSlot(1,0);
-    elevatorMotor.config_kF(1, 0.0525, Constants.kTimeoutMs);
-    elevatorMotor.config_kP(1, 0.08, Constants.kTimeoutMs);
-    elevatorMotor.config_kI(1, 0, Constants.kTimeoutMs);
-    elevatorMotor.config_kD(1, 0, Constants.kTimeoutMs);
-  /* set acceleration and vcruise velocity - see documentation */
-    elevatorMotor.configMotionCruiseVelocity(60000, Constants.kTimeoutMs);
-    elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
+
+    elevatorPID = elevatorMotor.getPIDController();
+    elevatorEncoder = elevatorMotor.getEncoder();
+
+
+    // set PID coefficients
+    elevatorPID.setP(4e-5);
+    elevatorPID.setI(1e-6);
+    elevatorPID.setD(0);
+    elevatorPID.setIZone(0);
+    elevatorPID.setFF(0.000156);
+    elevatorPID.setOutputRange(-1, 1);
+
+
+    elevatorPID.setSmartMotionMaxVelocity(10000, 0); //2500
+    elevatorPID.setSmartMotionMinOutputVelocity(0, 0);
+    elevatorPID.setSmartMotionMaxAccel(20000, 0);
+    elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 0);
+
+    elevatorPID.setSmartMotionMaxVelocity(250, 1);
+    elevatorPID.setSmartMotionMinOutputVelocity(0, 1);
+    elevatorPID.setSmartMotionMaxAccel(250, 1);
+    elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 1);
 
     armMotor.selectProfileSlot(0,0);
-    armMotor.config_kF(0, 2.2, Constants.kTimeoutMs);
-    armMotor.config_kP(0, 0.8, Constants.kTimeoutMs);
+    armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
+    armMotor.config_kP(0, 0.6, Constants.kTimeoutMs);
     armMotor.config_kI(0, 0, Constants.kTimeoutMs);
     armMotor.config_kD(0, 0.0001, Constants.kTimeoutMs);
-    armMotor.configAllowableClosedloopError(0, 100, Constants.kTimeoutMs);
+    armMotor.configAllowableClosedloopError(0, 50, Constants.kTimeoutMs);
     armMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     armMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
     armMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
-
-
+  
     armMotor.selectProfileSlot(1,0);
     armMotor.config_kF(1, 0.5, Constants.kTimeoutMs);
     armMotor.config_kP(1, 0.6, Constants.kTimeoutMs);
@@ -106,10 +115,8 @@ public class Gamepieces extends Subsystems{
     armMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
     armMotor.enableCurrentLimit(true);
 
-    elevatorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentLimit(50, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
-    elevatorMotor.enableCurrentLimit(true);
+    elevatorMotor.setSmartCurrentLimit(80, 50);
+    elevatorMotorSlave1.setSmartCurrentLimit(80);
 
     boxMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     boxMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
@@ -123,17 +130,15 @@ public class Gamepieces extends Subsystems{
     armMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
     armMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 
-    elevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
-    elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 
     armMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
-    elevatorMotor.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
+    elevatorEncoder.setPosition(0);
 
     armMotor.setSensorPhase(true);
 
  }
 
-  public void armClimbRunnable(int elevPos) {
+  public void armClimbRunnable(double elevPos) {
     armMotor.selectProfileSlot(1,0);
     armMotor.set(ControlMode.MotionMagic, -1*armPosition(elevPos));
   } 
@@ -184,24 +189,15 @@ public class Gamepieces extends Subsystems{
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_UP);    
   }
 
-  public void elevatorUp(int pos) {
-    elevatorMotor.configMotionCruiseVelocity(50000, Constants.kTimeoutMs);
-    elevatorMotor.configMotionAcceleration(200000, Constants.kTimeoutMs);
-    elevatorMotor.selectProfileSlot(0,0);
-    elevatorMotor.set(ControlMode.MotionMagic, pos);
+  public void elevatorUp(double pos) {
+    elevatorPID.setReference(pos, ControlType.kSmartMotion, 0);
   }
 
   public void elevatorClimb() {
-    elevatorMotor.configMotionCruiseVelocity(1700, Constants.kTimeoutMs);
-    elevatorMotor.configMotionAcceleration(1700, Constants.kTimeoutMs);  
-    elevatorMotor.selectProfileSlot(1,0);
-    elevatorMotor.set(ControlMode.MotionMagic, Constants.ELEVATOR_CLIMB);
+    elevatorPID.setReference(Constants.ELEVATOR_CLIMB, ControlType.kSmartMotion, 1);
   }
   public void elevatorUnClimb() {
-    elevatorMotor.configMotionCruiseVelocity(1000, Constants.kTimeoutMs);
-    elevatorMotor.configMotionAcceleration(1000, Constants.kTimeoutMs);  
-    elevatorMotor.selectProfileSlot(1,0);
-    elevatorMotor.set(ControlMode.MotionMagic, Constants.ELEVATOR_START);
+    elevatorPID.setReference(Constants.ELEVATOR_START, ControlType.kSmartMotion, 1);
   }
 
   public void scoreCargo(){
@@ -239,7 +235,7 @@ public class Gamepieces extends Subsystems{
   }
 
   public void manualElevator(double joystickY){
-    elevatorMotor.set(ControlMode.PercentOutput, 0.3*joystickY);
+    elevatorMotor.set(0.3*joystickY);
   }
 
   public void climbRelease() {
@@ -250,9 +246,7 @@ public class Gamepieces extends Subsystems{
     intakeMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     intakeMotor.configPeakCurrentLimit(25, Constants.kTimeoutMs);
     intakeMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
-    elevatorMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentLimit(20, Constants.kTimeoutMs);
-    elevatorMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
+    elevatorMotor.setSmartCurrentLimit(50, 70);
     armMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     armMotor.configPeakCurrentLimit(40, Constants.kTimeoutMs);
     armMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
@@ -279,14 +273,14 @@ public class Gamepieces extends Subsystems{
   public void compressorDisabled() {
     compressor.stop();
   }
-  public int armPosition(int elevatorPos) {
+  public int armPosition(double elevatorPos) {
     return (int)Math.round(1.15*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*elevatorPos/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
     }
   public int elevatorPosition(int armPos) {
     return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)))) / Constants.CLIMB_HEIGHT));
   }
-  public int getElevatorPos(){
-    return elevatorMotor.getSelectedSensorPosition(0);
+  public double getElevatorPos(){
+    return elevatorEncoder.getPosition();
   }
   public int getArmPos(){
     return armMotor.getSelectedSensorPosition(0);
