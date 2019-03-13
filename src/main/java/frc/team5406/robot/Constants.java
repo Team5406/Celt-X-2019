@@ -6,17 +6,18 @@ import edu.wpi.first.wpilibj.SPI;
 public final class Constants{
 
     public static boolean PRACTICE_BOT = false;
-    public static int BALL_SENSOR = 0;
+    public static int HATCH_SENSOR = 0;
+    public static double ELEV_GEAR = 12;
     
     public static int kTimeoutMs = 20;
-    public static int ARM_UP = -50;
-    public static int ARM_INTAKE = -2400;
+    public static int ARM_UP = -20;
+    public static int ARM_INTAKE = -2350;
     public static int ARM_CLIMB_START = -1400;
     public static double ARM_CLIMB_START_HEIGHT = 20.5;
     public static double ARM_CLIMB_START_ANGLE = 83;
 
-    public static int ARM_CLIMB_END = -3000;
-    public static int ARM_CLIMB_MID = -3000;
+    public static int ARM_CLIMB_END = -2400;
+    public static int ARM_CLIMB_MID = -2500;
     public static int ARM_L2_CLIMB_END = -4500;
     /*public static int CARGO_LEVEL_1 = -1800;
     public static int CARGO_LEVEL_2 = -15634;
@@ -27,15 +28,16 @@ public final class Constants{
     public static int ELEVATOR_CARGO_BOX = -8000;
     public static int ELEVATOR_CLIMB = 22000;
     public static int ELEVATOR_START = -1400;*/
+    //2.7 rev/in
     public static double CARGO_LEVEL_1 = 4.74609375;
     public static double CARGO_LEVEL_2 = 45.703125;
     public static double CARGO_LEVEL_3 = 82.1044921875;
-    public static double HATCH_LEVEL_1 = 14.4140625;
+    public static double HATCH_LEVEL_1 = 15;
     public static double HATCH_LEVEL_2 = 52.44140625;
-    public static double HATCH_LEVEL_3 = 87.1142578125;
+    public static double HATCH_LEVEL_3 = 85.1142578125;
     
     public static double ELEVATOR_CARGO_BOX = 24.31640625;
-    public static double ELEVATOR_CLIMB = -64.453125;
+    public static double ELEVATOR_CLIMB = -54;
     public static double ELEVATOR_START = 3.69048;
     public static double CLIMB_HEIGHT = -19;
     public static double ARM_LENGTH = 16.5;

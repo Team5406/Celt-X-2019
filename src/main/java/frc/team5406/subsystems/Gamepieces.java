@@ -28,7 +28,7 @@ public class Gamepieces extends Subsystems{
   
     WPI_TalonSRX boxMotor = new WPI_TalonSRX(15);
 
-    DigitalInput ballSensor = new DigitalInput(Constants.BALL_SENSOR);
+    DigitalInput hatchSensor = new DigitalInput(Constants.HATCH_SENSOR);
     Compressor compressor = new Compressor();
 
     CANEncoder elevatorEncoder;
@@ -56,23 +56,32 @@ public class Gamepieces extends Subsystems{
 
 
     // set PID coefficients
-    elevatorPID.setP(4e-5);
-    elevatorPID.setI(1e-6);
-    elevatorPID.setD(0);
-    elevatorPID.setIZone(0);
-    elevatorPID.setFF(0.000156);
-    elevatorPID.setOutputRange(-1, 1);
+    elevatorPID.setP(2e-5, 0);
+    elevatorPID.setI(1e-6, 0);
+    elevatorPID.setD(0.001, 0);
+    elevatorPID.setIZone(0, 0);
+    elevatorPID.setFF(0.000156, 0);
+    elevatorPID.setOutputRange(-1, 1, 0);
 
 
-    elevatorPID.setSmartMotionMaxVelocity(10000, 0); //2500
+    elevatorPID.setSmartMotionMaxVelocity(20000, 0); //2500
     elevatorPID.setSmartMotionMinOutputVelocity(0, 0);
     elevatorPID.setSmartMotionMaxAccel(20000, 0);
     elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 0);
 
-    elevatorPID.setSmartMotionMaxVelocity(250, 1);
+    // set PID coefficients
+    elevatorPID.setP(2e-4, 1);
+    elevatorPID.setI(1e-6, 1);
+    elevatorPID.setD(0.001, 1);
+    elevatorPID.setIZone(0, 1);
+    elevatorPID.setFF(0.000156, 1);
+    elevatorPID.setOutputRange(-1, 1, 1);
+    
+
+    elevatorPID.setSmartMotionMaxVelocity(7000, 1);
     elevatorPID.setSmartMotionMinOutputVelocity(0, 1);
-    elevatorPID.setSmartMotionMaxAccel(250, 1);
-    elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 1);
+    elevatorPID.setSmartMotionMaxAccel(5000, 1);
+    elevatorPID.setSmartMotionAllowedClosedLoopError(0.1, 1);
 
     armMotor.selectProfileSlot(0,0);
     armMotor.config_kF(0, 1.2, Constants.kTimeoutMs);
@@ -116,7 +125,7 @@ public class Gamepieces extends Subsystems{
     armMotor.enableCurrentLimit(true);
 
     elevatorMotor.setSmartCurrentLimit(80, 50);
-    elevatorMotorSlave1.setSmartCurrentLimit(80);
+    elevatorMotorSlave1.setSmartCurrentLimit(80, 50);
 
     boxMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     boxMotor.configPeakCurrentLimit(45, Constants.kTimeoutMs);
@@ -140,7 +149,7 @@ public class Gamepieces extends Subsystems{
 
   public void armClimbRunnable(double elevPos) {
     armMotor.selectProfileSlot(1,0);
-    armMotor.set(ControlMode.MotionMagic, -1*armPosition(elevPos));
+    armMotor.set(ControlMode.MotionMagic, armPosition(elevPos));
   } 
   public void armClimb() {
     armMotor.config_kF(1, 0.5, Constants.kTimeoutMs);
@@ -176,15 +185,15 @@ public class Gamepieces extends Subsystems{
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_CLIMB_MID);    
   }
   public void armIntake() {
-    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
-    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
+    armMotor.configMotionCruiseVelocity(12000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(35000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_INTAKE);    
   }
 
   public void armUp() {
-    armMotor.configMotionCruiseVelocity(7000, Constants.kTimeoutMs);
-    armMotor.configMotionAcceleration(15000, Constants.kTimeoutMs);
+    armMotor.configMotionCruiseVelocity(12000, Constants.kTimeoutMs);
+    armMotor.configMotionAcceleration(35000, Constants.kTimeoutMs);
     armMotor.selectProfileSlot(0,0);
     armMotor.set(ControlMode.MotionMagic, Constants.ARM_UP);    
   }
@@ -214,6 +223,11 @@ public class Gamepieces extends Subsystems{
     cargoDeploySolenoid.set(false);
   }
   public void intakeClimb(){
+    intakeMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
+    intakeMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
+    intakeMotor.configPeakCurrentDuration(100, Constants.kTimeoutMs);
+    intakeMotor.enableCurrentLimit(true);
+
     intakeMotor.set(ControlMode.PercentOutput,1.0);
   }
 
@@ -274,7 +288,7 @@ public class Gamepieces extends Subsystems{
     compressor.stop();
   }
   public int armPosition(double elevatorPos) {
-    return (int)Math.round(1.15*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*elevatorPos/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
+    return (int)Math.round(1.2*((180/Math.PI)*(Math.asin(((Constants.CLIMB_HEIGHT*(elevatorPos)/Constants.ELEVATOR_CLIMB)+Constants.ARM_CLIMB_START_HEIGHT-Constants.ARM_ORIGIN)/Constants.ARM_LENGTH))-Constants.ARM_CLIMB_START_ANGLE)*(4096/120));
     }
   public int elevatorPosition(int armPos) {
     return (int)Math.round((Constants.ELEVATOR_CLIMB * (Math.sin((180 / Math.PI) * ((((120 * armPos) / 4096) * Constants.ARM_LENGTH) + Constants.ARM_ORIGIN * (getArmPos() > -2815 ? +1 : -1)))) / Constants.CLIMB_HEIGHT));
@@ -286,7 +300,7 @@ public class Gamepieces extends Subsystems{
     return armMotor.getSelectedSensorPosition(0);
   }
 
-  public boolean haveBall(){
-    return !ballSensor.get();
+  public boolean haveHatch(){
+    return !hatchSensor.get();
   }
 }
