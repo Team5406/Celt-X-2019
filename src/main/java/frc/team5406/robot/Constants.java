@@ -7,26 +7,40 @@ public final class Constants{
 
     public static boolean PRACTICE_BOT = false;
     public static int BALL_SENSOR = 0;
-    public static int kTimeoutMs = 15;
+    public static int kTimeoutMs = 20;
     public static int ARM_UP = 50;
     public static int ARM_INTAKE = 2400;
     public static int ARM_CLIMB_START = 1400;
     public static double ARM_CLIMB_START_HEIGHT = 20.5;
     public static double ARM_CLIMB_START_ANGLE = 83;
 
-    public static int ARM_CLIMB_END = 4530;
-    public static int ARM_CLIMB_MID = 3000;
+    public static int ARM_CLIMB_END = 2400;
+    public static int ARM_CLIMB_MID = 2500;
+    public static int ARM_L2_CLIMB_END = 4500;
 
-    public static int CARGO_LEVEL_1 = -1620;
-    public static int CARGO_LEVEL_2 = -14071;
-    public static int CARGO_LEVEL_3 = -28025;
-    public static int HATCH_LEVEL_1 = -2700;
-    public static int HATCH_LEVEL_2 = -15930;
-    public static int HATCH_LEVEL_3 = -29735
-    ;
-    public static int ELEVATOR_CARGO_BOX = -7200;
+    public static int HATCH_SENSOR = 0;
+    public static double ELEV_GEAR = 12;
+    
+    /*public static int CARGO_LEVEL_1 = -1800;
+    public static int CARGO_LEVEL_2 = -15634;
+    public static int CARGO_LEVEL_3 = -29500;
+    public static int HATCH_LEVEL_1 = -3000;
+    public static int HATCH_LEVEL_2 = -17700;
+    public static int HATCH_LEVEL_3 = -31300;
+    public static int ELEVATOR_CARGO_BOX = -8000;
     public static int ELEVATOR_CLIMB = 22000;
-    public static int ELEVATOR_START = -1260;
+    public static int ELEVATOR_START = -1400;*/
+    //2.7 rev/in
+    public static double CARGO_LEVEL_1 = -4.74609375;
+    public static double CARGO_LEVEL_2 = -49.703125;
+    public static double CARGO_LEVEL_3 = -85.1044921875;
+    public static double HATCH_LEVEL_1 = -16.7;
+    public static double HATCH_LEVEL_2 = -55;
+    public static double HATCH_LEVEL_3 = -87.1142578125;
+    
+    public static double ELEVATOR_CARGO_BOX = -24.31640625;
+    public static double ELEVATOR_CLIMB = 54;
+    public static double ELEVATOR_START = -3.69048;
     public static double CLIMB_HEIGHT = -19;
     public static double ARM_LENGTH = 16.5;
     public static double ARM_ORIGIN = 9.5;
