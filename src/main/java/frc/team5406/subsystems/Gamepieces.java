@@ -62,12 +62,18 @@ public class Gamepieces extends Subsystems{
     elevatorMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     elevatorMotorSlave1.setIdleMode(CANSparkMax.IdleMode.kCoast);
     // set PID coefficients
-    elevatorPID.setP(2e-5, 0);
+    elevatorPID.setP(3e-5, 0);
+    elevatorPID.setI(1e-6, 0);
+    elevatorPID.setD(0.0015, 0);
+    elevatorPID.setIZone(0, 0);
+    elevatorPID.setFF(0.000156, 0);
+    elevatorPID.setOutputRange(-1, 1, 0);
+    /*elevatorPID.setP(2e-5, 0);
     elevatorPID.setI(1e-6, 0);
     elevatorPID.setD(0.001, 0);
     elevatorPID.setIZone(0, 0);
     elevatorPID.setFF(0.000156, 0);
-    elevatorPID.setOutputRange(-1, 1, 0);
+    elevatorPID.setOutputRange(-1, 1, 0);*/
     /*elevatorPID.setP(2e-5, 0);
     elevatorPID.setI(1e-6, 0);
     elevatorPID.setD(0.0015, 0);
@@ -232,6 +238,8 @@ public class Gamepieces extends Subsystems{
     boxMotor.set(ControlMode.PercentOutput,0.8);
     cargoDeploySolenoid.set(false);
   }
+
+
   public void intakeClimb(){
     intakeMotor.configContinuousCurrentLimit(9, Constants.kTimeoutMs);
     intakeMotor.configPeakCurrentLimit(15, Constants.kTimeoutMs);
@@ -251,7 +259,7 @@ public class Gamepieces extends Subsystems{
   public void intakeDefault(){
     intakeMotor.set(ControlMode.PercentOutput,0.0);
     conveyorMotor.set(ControlMode.PercentOutput,0.0);
-    boxMotor.set(ControlMode.PercentOutput,0.0);
+    boxMotor.set(ControlMode.PercentOutput,0.32);
     cargoDeploySolenoid.set(false);
   }
   public void manualArm(double joystickY){
@@ -323,5 +331,8 @@ public class Gamepieces extends Subsystems{
     SmartDashboard.putBoolean("hatchSensor", haveHatch());  
   }
 
+  public void cameraVisionOff(){
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+  }
   
 }

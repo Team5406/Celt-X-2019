@@ -9,7 +9,7 @@ public final class Constants{
     public static int BALL_SENSOR = 0;
     public static int kTimeoutMs = 20;
     public static int ARM_UP = 50;
-    public static int ARM_INTAKE = 2400;
+    public static int ARM_INTAKE = 2450;
     public static int ARM_CLIMB_START = 1400;
     public static double ARM_CLIMB_START_HEIGHT = 20.5;
     public static double ARM_CLIMB_START_ANGLE = 83;
@@ -34,7 +34,7 @@ public final class Constants{
     public static double CARGO_LEVEL_1 = -4.74609375;
     public static double CARGO_LEVEL_2 = -49.703125;
     public static double CARGO_LEVEL_3 = -85.1044921875;
-    public static double HATCH_LEVEL_1 = -16.7;
+    public static double HATCH_LEVEL_1 = -15;
     public static double HATCH_LEVEL_2 = -55;
     public static double HATCH_LEVEL_3 = -87.1142578125;
     
