@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.networktables.*;
+
 
 public class Drive extends Subsystems{
 
@@ -17,6 +19,12 @@ public class Drive extends Subsystems{
   DifferentialDrive drive = new DifferentialDrive(leftDriveMotor, rightDriveMotor);
 
   public boolean highGear = false;
+
+  public boolean llHasValidTarget = false;
+  public double llSteer = 0.0;
+
+  public double llLastError = 0; 
+  public double llTotalError = 0;
 
 
 public Drive(){
@@ -78,4 +86,39 @@ public Drive(){
     drive.curvatureDrive(throttle, turning, quickTurn);
 
     }
-}
+
+    public void updateLimelightTracking()
+    {
+          double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+          double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        // ts: close to 0 - left, close to 90 - right
+        // tx: negative - left, positive - right
+  
+        // These numbers must be tuned for your Robot!  Be careful!
+        final double STEER_KP = 0.15;                    // how hard to turn toward the target
+        final double STEER_KD = 0.003;
+        final double STEER_KI = 0.08;
+        final double MAX_DRIVE = 0.7;                   // Simple speed limit so we don't drive too fast
+  
+          if (tv < 1.0)
+          {
+            llHasValidTarget = false;
+            llSteer = 0.0;
+            return;
+          }
+  
+          llHasValidTarget = true;
+          llTotalError += tx;
+  
+          // Start with proportional steering
+          llSteer = tx * STEER_KP + STEER_KD * (tx - llLastError) / 0.02 + STEER_KI * llTotalError * 0.02;
+  
+          // try to drive forward until the target area reaches our desired area
+          llLastError = tx;
+          if (Math.abs(llSteer) > MAX_DRIVE)
+          {
+            llSteer = Math.signum(llSteer) * MAX_DRIVE;
+          }
+    }
+  
+  }

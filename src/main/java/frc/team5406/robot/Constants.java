@@ -32,7 +32,7 @@ public final class Constants{
     public static double CARGO_LEVEL_1 = 4.74609375;
     public static double CARGO_LEVEL_2 = 45.703125;
     public static double CARGO_LEVEL_3 = 82.1044921875;
-    public static double HATCH_LEVEL_1 = 15;
+    public static double HATCH_LEVEL_1 = 14;
     public static double HATCH_LEVEL_2 = 52.44140625;
     public static double HATCH_LEVEL_3 = 85.1142578125;
     

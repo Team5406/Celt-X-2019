@@ -23,6 +23,8 @@ public class Robot extends TimedRobot {
   XboxController operatorGamepad = new XboxController(0);
 
 
+
+
   class PeriodicRunnable implements java.lang.Runnable {
     public void run() { 
       gamepieceHandler.armClimbRunnable(gamepieceHandler.getElevatorPos());
@@ -51,18 +53,42 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    robotDrive.updateLimelightTracking();
+
     //System.out.println(gamepieceHandler.getElevatorPos());
     SmartDashboard.putBoolean("hatchSensor", gamepieceHandler.haveHatch());
-    if( Math.abs(driverGamepad.getLeftY()) > 0.05 ||  !climbTried ){
-    robotDrive.arcadeDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
-    //robotDrive.cheesyDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
-    //robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+    if (driverGamepad.getButtonHeld(XboxController.Y_BUTTON))
+    {
+      if (robotDrive.llHasValidTarget)
+      {
+        double driveSpeed = driverGamepad.getLeftY();
+        robotDrive.shiftLow();
+        if (Math.abs(driveSpeed) > 0.7){
+          driveSpeed = 0.7*Math.signum(driveSpeed);
+        }
+            robotDrive.arcadeDrive(-1*driveSpeed, robotDrive.llSteer, false);
+      }
+      else 
+      {
+            robotDrive.arcadeDrive(0.0, 0.0, false);
+      }
+    } else {
+      if( Math.abs(driverGamepad.getLeftY()) > 0.05 ||  !climbTried ){
+        robotDrive.llLastError = 0;
+        robotDrive.llTotalError = 0;
+        robotDrive.arcadeDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+      //robotDrive.cheesyDrive(-1*driverGamepad.getLeftY(), driverGamepad.getRightX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+      //robotDrive.cheesyDrive(driverGamepad.getRightTrigger(), driverGamepad.getLeftTrigger(), driverGamepad.getLeftX(), driverGamepad.getButtonHeld(XboxController.A_BUTTON));
+       }
+       
+       if(driverGamepad.getButtonHeld(XboxController.B_BUTTON) || driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+        robotDrive.shiftHigh();
+      }else{
+        robotDrive.shiftLow();
+      }
+    
     }
-    if(driverGamepad.getButtonHeld(XboxController.B_BUTTON) || driverGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
-      robotDrive.shiftHigh();
-    }else{
-      robotDrive.shiftLow();
-    }
+
    // System.out.println("climbTried: " + climbTried + ", climbCount: " + climbCount + ", climbDriveCount: " + climbDriveCount + ", climbDrive:" + climbDrive);
     if(operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       climbCount++;
@@ -113,10 +139,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
-    gamepieceHandler.armClimb();
-    robotDrive.shiftLow();
-  }else if (climbCount > 0){
+if (climbCount > 0){
   }else if (operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){ 
   }else if (operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
   }else if (driverGamepad.getRightTriggerPressed() || driverGamepad.getLeftTriggerPressed()){
@@ -208,7 +231,6 @@ public class Robot extends TimedRobot {
     }
 
   }
-
 
 
 }
