@@ -21,6 +21,7 @@ public class Gamepieces extends Subsystems{
     WPI_VictorSPX armSlave = new WPI_VictorSPX(8);
   
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
+    WPI_TalonSRX intakeMotorSlave = new WPI_TalonSRX(13);
     WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(10);
   
     CANSparkMax elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
@@ -54,6 +55,8 @@ public class Gamepieces extends Subsystems{
     elevatorPID = elevatorMotor.getPIDController();
     elevatorEncoder = elevatorMotor.getEncoder();
 
+    intakeMotorSlave.setInverted(true);
+    intakeMotorSlave.follow(intakeMotor);
 
     // set PID coefficients
     elevatorPID.setP(2e-5, 0);
@@ -66,13 +69,13 @@ public class Gamepieces extends Subsystems{
 
     elevatorPID.setSmartMotionMaxVelocity(20000, 0); //2500
     elevatorPID.setSmartMotionMinOutputVelocity(0, 0);
-    elevatorPID.setSmartMotionMaxAccel(20000, 0);
+    elevatorPID.setSmartMotionMaxAccel(10000, 0);
     elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 0);
 
     // set PID coefficients
-    elevatorPID.setP(2e-4, 1);
+    elevatorPID.setP(6e-5, 1);
     elevatorPID.setI(1e-6, 1);
-    elevatorPID.setD(0.001, 1);
+    elevatorPID.setD(0.004, 1);
     elevatorPID.setIZone(0, 1);
     elevatorPID.setFF(0.000156, 1);
     elevatorPID.setOutputRange(-1, 1, 1);
@@ -241,7 +244,7 @@ public class Gamepieces extends Subsystems{
   public void intakeDefault(){
     intakeMotor.set(ControlMode.PercentOutput,0.0);
     conveyorMotor.set(ControlMode.PercentOutput,0.0);
-    boxMotor.set(ControlMode.PercentOutput,0.0);
+    boxMotor.set(ControlMode.PercentOutput,0.32);
     cargoDeploySolenoid.set(false);
   }
   public void manualArm(double joystickY){

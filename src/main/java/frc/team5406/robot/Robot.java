@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     }else{
       robotDrive.shiftLow();
     }
-    System.out.println("climbTried: " + climbTried + ", climbCount: " + climbCount + ", climbDriveCount: " + climbDriveCount + ", climbDrive:" + climbDrive);
+   // System.out.println("climbTried: " + climbTried + ", climbCount: " + climbCount + ", climbDriveCount: " + climbDriveCount + ", climbDrive:" + climbDrive);
     if(operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
       climbCount++;
       climbTried = true;
