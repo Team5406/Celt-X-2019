@@ -95,9 +95,9 @@ public Drive(){
         // tx: negative - left, positive - right
   
         // These numbers must be tuned for your Robot!  Be careful!
-        final double STEER_KP = 0.15;                    // how hard to turn toward the target
-        final double STEER_KD = 0.003;
-        final double STEER_KI = 0.08;
+        final double STEER_KP = 0.08;                    // how hard to turn toward the target
+        final double STEER_KD = 0.005;
+        final double STEER_KI = 0.1;
         final double MAX_DRIVE = 0.7;                   // Simple speed limit so we don't drive too fast
   
           if (tv < 1.0)

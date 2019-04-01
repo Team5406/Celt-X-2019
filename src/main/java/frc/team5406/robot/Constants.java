@@ -39,7 +39,7 @@ public final class Constants{
     public static double ELEVATOR_CARGO_BOX = 24.31640625;
     public static double ELEVATOR_CLIMB = -54;
     public static double ELEVATOR_START = 3.69048;
-    public static double CLIMB_HEIGHT = -19;
+    public static double CLIMB_HEIGHT = -20;
     public static double ARM_LENGTH = 16.5;
     public static double ARM_ORIGIN = 9.5;
 
