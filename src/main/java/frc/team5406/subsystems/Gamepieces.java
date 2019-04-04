@@ -27,6 +27,7 @@ public class Gamepieces extends Subsystems{
     WPI_TalonSRX armSlave = new WPI_TalonSRX(8);
   
     WPI_TalonSRX intakeMotor = new WPI_TalonSRX(9);
+    WPI_VictorSPX intakeMotorSlave = new WPI_VictorSPX(13);
     WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(10);
   
     CANSparkMax elevatorMotor = new CANSparkMax(11, MotorType.kBrushless);
@@ -51,9 +52,11 @@ public class Gamepieces extends Subsystems{
     public Gamepieces(){
     conveyorMotor.setInverted(true); //Comp Bot
     armSlave.setInverted(true);
+    intakeMotorSlave.setInverted(true);
 
     armSlave.follow(armMotor);
     elevatorMotorSlave1.follow(elevatorMotor, true);
+    intakeMotorSlave.follow(intakeMotor);
 
 
     elevatorPID = elevatorMotor.getPIDController();
