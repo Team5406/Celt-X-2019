@@ -45,6 +45,9 @@ public final class Constants{
     public static double ARM_LENGTH = 16.5;
     public static double ARM_ORIGIN = 9.5;
 
+    public static double ELEV_UP = -1;
+    public static double ELEV_DOWN = 1;
+
     // PCM Ports
     public static int SHIFT_SOLENOID = 0;
     public static int CARGO_DEPLOY_SOLENOID = 1;
@@ -63,6 +66,20 @@ public final class Constants{
     public static boolean SHIFT_HIGH = true;
     public static boolean SHIFT_LOW = false;
     
+    public static double maxVel = 140;
+    public static double maxAccel = 150;
+    public static double maxVelk = 5;
+    public static double tolerance = 0.2;
+    public static double spacing = 0.5;
+    public static double a = 0.02;
+    public static double b = 0.98;
+    public static double robotTrack = 14;
+    public static Integer lookaheadDistance = 22;
+    public static double kP = 0.01;
+    public static double INCHES_PER_TICK = 113.288/120;
+
+    public static double LL_TARGET_AREA = 9.1;
+
     public Constants() {
     }
 }

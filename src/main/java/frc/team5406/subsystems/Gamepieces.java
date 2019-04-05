@@ -64,6 +64,9 @@ public class Gamepieces extends Subsystems{
 
     elevatorMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     elevatorMotorSlave1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    intakeMotorSlave.setInverted(true);
+    intakeMotorSlave.follow(intakeMotor);
+
     // set PID coefficients
     elevatorPID.setP(3e-5, 0);
     elevatorPID.setI(1e-6, 0);
@@ -90,9 +93,9 @@ public class Gamepieces extends Subsystems{
     elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 0);
 
     // set PID coefficients
-    elevatorPID.setP(2e-4, 1);
+    elevatorPID.setP(6e-5, 1);
     elevatorPID.setI(1e-6, 1);
-    elevatorPID.setD(0.001, 1);
+    elevatorPID.setD(0.004, 1);
     elevatorPID.setIZone(0, 1);
     elevatorPID.setFF(0.000156, 1);
     elevatorPID.setOutputRange(-1, 1, 1);
@@ -221,6 +224,9 @@ public class Gamepieces extends Subsystems{
     elevatorPID.setReference(pos, ControlType.kSmartMotion, 0);
   }
 
+
+
+
   public void elevatorClimb() {
     elevatorPID.setReference(Constants.ELEVATOR_CLIMB, ControlType.kSmartMotion, 1);
   }
@@ -270,8 +276,11 @@ public class Gamepieces extends Subsystems{
   }
 
   public void manualElevator(double joystickY){
-    elevatorMotor.set(0.3*joystickY);
+    double pos = elevatorEncoder.getPosition();
+    pos += Constants.ELEV_UP*joystickY*0.5;
+    elevatorUp(pos);
   }
+
 
   public void climbRelease() {
     climbReleaseSolenoid.set(true);
@@ -325,17 +334,5 @@ public class Gamepieces extends Subsystems{
     return !hatchSensor.get();
   }
 
-  public void hatchNotify(){
-    if(haveHatch()){
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
-    }else{
-      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    }
-    SmartDashboard.putBoolean("hatchSensor", haveHatch());  
-  }
-
-  public void cameraVisionOff(){
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-  }
   
 }
