@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.Solenoid;
 import frc.team5406.robot.Constants;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Gamepieces extends Subsystems{
 
@@ -205,6 +208,9 @@ public class Gamepieces extends Subsystems{
     elevatorPID.setReference(pos, ControlType.kSmartMotion, 0);
   }
 
+
+
+
   public void elevatorClimb() {
     elevatorPID.setReference(Constants.ELEVATOR_CLIMB, ControlType.kSmartMotion, 1);
   }
@@ -252,8 +258,11 @@ public class Gamepieces extends Subsystems{
   }
 
   public void manualElevator(double joystickY){
-    elevatorMotor.set(0.3*joystickY);
+    double pos = elevatorEncoder.getPosition();
+    pos += Constants.ELEV_UP*joystickY*0.5;
+    elevatorUp(pos);
   }
+
 
   public void climbRelease() {
     climbReleaseSolenoid.set(true);
@@ -306,4 +315,6 @@ public class Gamepieces extends Subsystems{
   public boolean haveHatch(){
     return !hatchSensor.get();
   }
+
+  
 }
