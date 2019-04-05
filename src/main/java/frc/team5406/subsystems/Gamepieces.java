@@ -306,10 +306,10 @@ public class Gamepieces extends Subsystems{
   }
 
   public void hatchGrip() {
-    hatchGripSolenoid.set(true);
+    hatchGripSolenoid.set(false);
   }
   public void hatchRelease() {
-    hatchGripSolenoid.set(false);
+    hatchGripSolenoid.set(true);
   }
   public void compressorEnabled() {
     compressor.start();
@@ -333,6 +333,14 @@ public class Gamepieces extends Subsystems{
   public boolean haveHatch(){
     return !hatchSensor.get();
   }
-
+  
+  public void hatchNotify(){
+    if(haveHatch()){
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
+    }else{
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    }
+    SmartDashboard.putBoolean("hatchSensor", haveHatch());  
+  }
   
 }

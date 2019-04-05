@@ -145,6 +145,9 @@ public class Robot extends TimedRobot implements PIDOutput  {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
       }
+    }else{
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);  
     }
 
     if(!cancelAuto){
@@ -181,8 +184,10 @@ public class Robot extends TimedRobot implements PIDOutput  {
     case 2:
         autoCount++;
         System.out.println(autoStep + " - Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
-        if(autoCount >= 11){
+        if(autoCount > 4){
           gamepieceHandler.hatchRelease();
+        }        
+        if(autoCount >= 16){
           robotDrive.setVelocityClosedLoop(0, 0);
           lastllDrive = 0;
           llLastError = 0;
@@ -192,7 +197,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
           autoStep=3;
 
         }else{
-          robotDrive.setVelocityClosedLoop(20-autoCount*2, 20-autoCount*2);
+          robotDrive.setVelocityClosedLoop(20-autoCount*1.5, 20-autoCount*1.5);
         }
         break;
       case 3:
@@ -256,8 +261,8 @@ public class Robot extends TimedRobot implements PIDOutput  {
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, true);
         List<Path> paths = new ArrayList<Path>();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
-        pathGenerator.addPoint(new Vector(94, 80));
-        pathGenerator.addPoint(new Vector(94, 60));
+        pathGenerator.addPoint(new Vector(90, 80));
+        pathGenerator.addPoint(new Vector(90, 60));
 
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
         pathGenerator.setVelocities(Constants.maxVel, 50, Constants.maxVelk, 35);
@@ -307,13 +312,12 @@ public class Robot extends TimedRobot implements PIDOutput  {
     case 8:
       // Drive to cargo line (hatch backwards)
        { System.out.println(autoStep + " - At feeder station" +  (Timer.getFPGATimestamp()-startTime));
-       gamepieceHandler.hatchRetract();
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
         List<Path> paths = new ArrayList<Path>();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
         pathGenerator.addPoint(new Vector(70, 210));
-        pathGenerator.addPoint(new Vector(80, 245));
-        pathGenerator.addPoint(new Vector(80, 272));
+        pathGenerator.addPoint(new Vector(70, 245));
+        pathGenerator.addPoint(new Vector(70, 272));
         //pathGenerator.addPoint(new Vector(40, 265));
 
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
@@ -326,12 +330,15 @@ public class Robot extends TimedRobot implements PIDOutput  {
         autoModeExecuter = new AutoModeExecuter();
         autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
         autoModeExecuter.start();
-        autoStep = 9;}
+        autoStep = 9;
+        autoCount = 0;}
       break;
       case 9:
       // Drive to cargo line (hatch backwards)
+      if(autoCount > 40){
+        gamepieceHandler.hatchRetract();
+      }
       if (purePursuitTracker.isDone()) {
-        gamepieceHandler.hatchGrip();
         System.out.println(autoStep + " - turn around" +  (Timer.getFPGATimestamp()-startTime));
         rocketTurnController.setSetpoint(150);
         rocketTurnController.enable();
@@ -396,7 +403,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
         List<Path> paths = new ArrayList<Path>();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
-        pathGenerator.addPoint(new Vector(60, 260));
+        pathGenerator.addPoint(new Vector(50, 260));
         //pathGenerator.addPoint(new Vector(30, 260));
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
         pathGenerator.setVelocities(Constants.maxVel, Constants.maxAccel, Constants.maxVelk, 0);
@@ -429,7 +436,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
     robotDrive.updateLimelightTracking();
 
     //System.out.println(gamepieceHandler.getElevatorPos());
-    SmartDashboard.putBoolean("hatchSensor", gamepieceHandler.haveHatch());
+    gamepieceHandler.hatchNotify();
     if (driverGamepad.getButtonHeld(XboxController.Y_BUTTON) && !gamepieceHandler.haveHatch())
     {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
@@ -468,7 +475,18 @@ public class Robot extends TimedRobot implements PIDOutput  {
     
     }
 
-
+    if(driverGamepad.getButtonHeld(XboxController.Y_BUTTON)){
+    }else if (climbCount > 0){
+    }else if (operatorGamepad.getButtonHeld(XboxController.START_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){ 
+    }else if (operatorGamepad.getButtonHeld(XboxController.BACK_BUTTON) && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+    }else if (driverGamepad.getRightTriggerPressed() || driverGamepad.getLeftTriggerPressed()){
+    }else if (operatorGamepad.getDirectionPad() == DirectionPad.UP && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+      gamepieceHandler.manualArm(0.3);
+    }else if (operatorGamepad.getDirectionPad() == DirectionPad.DOWN && operatorGamepad.getButtonHeld(XboxController.RIGHT_BUMPER)){
+      gamepieceHandler.manualArm(-0.3);
+    }else{
+      gamepieceHandler.armUp();
+    }
   
     //Operator Controls
    
@@ -538,9 +556,9 @@ public class Robot extends TimedRobot implements PIDOutput  {
     }
 
     if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
-      gamepieceHandler.hatchGrip();
-    }else{
       gamepieceHandler.hatchRelease();
+    }else{
+      gamepieceHandler.hatchGrip();
     }
 
   }
@@ -548,7 +566,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
 
   @Override
   public void disabledPeriodic(){
-    SmartDashboard.putBoolean("hatchSensor", gamepieceHandler.haveHatch());  
+    gamepieceHandler.hatchNotify();
     SmartDashboard.putNumber("X", poseEstimator.getPose().x);
     SmartDashboard.putNumber("Y", poseEstimator.getPose().y);
     SmartDashboard.putNumber("dLeft", robotDrive.getLeftDistance());
@@ -568,6 +586,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
     robotDrive.setVelocityClosedLoop(0, 0);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+    gamepieceHandler.compressorEnabled();
 
   }
 
@@ -576,7 +595,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
     robotDrive.updateLimelightTracking();
 
     //System.out.println(gamepieceHandler.getElevatorPos());
-    SmartDashboard.putBoolean("hatchSensor", gamepieceHandler.haveHatch());
+    gamepieceHandler.hatchNotify();
     if (driverGamepad.getButtonHeld(XboxController.Y_BUTTON) && !gamepieceHandler.haveHatch())
     {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
@@ -750,9 +769,9 @@ if (climbCount > 0){
     }
 
     if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
-      gamepieceHandler.hatchGrip();
-    }else{
       gamepieceHandler.hatchRelease();
+    }else{
+      gamepieceHandler.hatchGrip();
     }
 
   }
@@ -811,5 +830,12 @@ if (climbCount > 0){
     }
     llDrive = drive_cmd;
     llArea = ta;
+  }
+
+  @Override
+  public void testPeriodic() {
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+
   }
 }

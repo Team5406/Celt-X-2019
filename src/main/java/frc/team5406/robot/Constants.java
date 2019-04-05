@@ -78,7 +78,7 @@ public final class Constants{
     public static double kP = 0.01;
     public static double INCHES_PER_TICK = 113.288/120;
 
-    public static double LL_TARGET_AREA = 9.1;
+    public static double LL_TARGET_AREA = 10;
 
     public Constants() {
     }

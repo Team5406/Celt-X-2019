@@ -87,16 +87,16 @@ public class Drive extends DriveTrainBase {
 	/**
 	 * @return left encoder distance value
 	 */
-	public double getLeftDistance(){
-        return leftEncoder.getPosition();
+	public double getRightDistance(){
+        return -1*leftEncoder.getPosition();
 
     }
 
 	/**
 	 * @return right encoder distance value
 	 */
-	public double getRightDistance(){
-        return rightEncoder.getPosition();
+	public double getLeftDistance(){
+        return -1*rightEncoder.getPosition();
     }
 
 	/**
@@ -111,16 +111,16 @@ public class Drive extends DriveTrainBase {
 	/**
 	 * @return velocity of left side of robot
 	 */
-	public double getLeftVelocity(){
-        return Constants.INCHES_PER_TICK*leftEncoder.getVelocity()/60;
+	public double getRightVelocity(){
+        return -1*Constants.INCHES_PER_TICK*leftEncoder.getVelocity()/60;
 
     }
 
 	/**
 	 * @return velocity of right side of robot
 	 */
-	public double getRightVelocity(){
-        return Constants.INCHES_PER_TICK*rightEncoder.getVelocity()/60;
+	public double getLeftVelocity(){
+        return -1*Constants.INCHES_PER_TICK*rightEncoder.getVelocity()/60;
     }
 
 	/**
@@ -130,8 +130,8 @@ public class Drive extends DriveTrainBase {
 	 */
 	public void setVelocityClosedLoop(double left, double right){
        //System.out.println(60*left/Constants.INCHES_PER_TICK + ", " + 60*right/Constants.INCHES_PER_TICK);
-        leftDrivePID.setReference(60*left/Constants.INCHES_PER_TICK, ControlType.kVelocity, 0);
-        rightDrivePID.setReference(60*right/Constants.INCHES_PER_TICK, ControlType.kVelocity, 0);
+        leftDrivePID.setReference(-60*right/Constants.INCHES_PER_TICK, ControlType.kVelocity, 0);
+        rightDrivePID.setReference(-60*left/Constants.INCHES_PER_TICK, ControlType.kVelocity, 0);
     }
 
 	/**
@@ -181,7 +181,7 @@ public class Drive extends DriveTrainBase {
             precisionDriveX = 1;
           }
     
-      drive.arcadeDrive(precisionDriveX*turn, precisionDriveY*speed);
+      drive.arcadeDrive(precisionDriveX*turn, -1*precisionDriveY*speed);
       }
       
       public void cheesyDrive(double throttle, double turning, boolean slow){
@@ -243,7 +243,7 @@ public class Drive extends DriveTrainBase {
         }
 
           public double maxllArea(double angle){
-   return -0.0054*angle*angle + 0.6546*angle - 11.084;
+   return -0.0054*angle*angle + 0.6546*angle - 11.584;
   }
       
 }
