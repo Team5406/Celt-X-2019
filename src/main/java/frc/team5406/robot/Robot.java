@@ -577,8 +577,11 @@ public class Robot extends TimedRobot implements PIDOutput  {
 
     //System.out.println(gamepieceHandler.getElevatorPos());
     SmartDashboard.putBoolean("hatchSensor", gamepieceHandler.haveHatch());
-    if (driverGamepad.getButtonHeld(XboxController.Y_BUTTON))
+    if (driverGamepad.getButtonHeld(XboxController.Y_BUTTON) && !gamepieceHandler.haveHatch())
     {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+
       if (robotDrive.llHasValidTarget)
       {
         double driveSpeed = driverGamepad.getLeftY();
@@ -593,6 +596,8 @@ public class Robot extends TimedRobot implements PIDOutput  {
             robotDrive.arcadeDrive(0.0, 0.0, false);
       }
     } else {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
       if( Math.abs(driverGamepad.getLeftY()) > 0.05 ||  !climbTried ){
         robotDrive.llLastError = 0;
         robotDrive.llTotalError = 0;
