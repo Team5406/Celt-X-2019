@@ -95,6 +95,8 @@ public class Robot extends TimedRobot implements PIDOutput  {
     purePursuitTracker.setPaths(paths, Constants.lookaheadDistance);
     purePursuitTracker.setPath(0);
     gamepieceHandler.compressorDisabled();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
 
   }
 
@@ -184,10 +186,10 @@ public class Robot extends TimedRobot implements PIDOutput  {
     case 2:
         autoCount++;
         System.out.println(autoStep + " - Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
-        if(autoCount > 4){
+        if(autoCount > 5){
           gamepieceHandler.hatchRelease();
         }        
-        if(autoCount >= 16){
+        if(autoCount >= 26){
           robotDrive.setVelocityClosedLoop(0, 0);
           lastllDrive = 0;
           llLastError = 0;
@@ -197,7 +199,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
           autoStep=3;
 
         }else{
-          robotDrive.setVelocityClosedLoop(20-autoCount*1.5, 20-autoCount*1.5);
+          robotDrive.setVelocityClosedLoop(20-autoCount*0.8, 20-autoCount*0.8);
         }
         break;
       case 3:
@@ -373,7 +375,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
           lastllDrive = llDrive;
           System.out.println ("dr: " + llDrive + ", st: " + llSteer);
           robotDrive.setVelocityClosedLoop(50*(llDrive + llDrive*llSteer*0.3), 50*(llDrive - llDrive*llSteer*0.3));
-          if (llArea > Constants.LL_TARGET_AREA-1) {
+          if (llArea > Constants.LL_TARGET_AREA-0.7) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
             autoStep=11;
@@ -549,17 +551,18 @@ public class Robot extends TimedRobot implements PIDOutput  {
       gamepieceHandler.intakeDefault();
     }
 
-    if(operatorGamepad.getLeftTriggerPressed()){
+    if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
       gamepieceHandler.hatchExtend();
     }else{
       gamepieceHandler.hatchRetract();
     }
 
-    if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
+    if(operatorGamepad.getLeftTriggerPressed()){
       gamepieceHandler.hatchRelease();
     }else{
       gamepieceHandler.hatchGrip();
     }
+
 
   }
   }
@@ -762,13 +765,13 @@ if (climbCount > 0){
       gamepieceHandler.intakeDefault();
     }
 
-    if(operatorGamepad.getLeftTriggerPressed()){
+    if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
       gamepieceHandler.hatchExtend();
     }else{
       gamepieceHandler.hatchRetract();
     }
 
-    if(operatorGamepad.getButtonHeld(XboxController.LEFT_BUMPER)){
+    if(operatorGamepad.getLeftTriggerPressed()){
       gamepieceHandler.hatchRelease();
     }else{
       gamepieceHandler.hatchGrip();

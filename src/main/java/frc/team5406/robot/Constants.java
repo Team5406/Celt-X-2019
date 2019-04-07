@@ -34,7 +34,7 @@ public final class Constants{
     public static double CARGO_LEVEL_1 = -4.74609375;
     public static double CARGO_LEVEL_2 = -49.703125;
     public static double CARGO_LEVEL_3 = -85.1044921875;
-    public static double HATCH_LEVEL_1 = -15;
+    public static double HATCH_LEVEL_1 = -16;
     public static double HATCH_LEVEL_2 = -55;
     public static double HATCH_LEVEL_3 = -87.1142578125;
     
@@ -78,7 +78,7 @@ public final class Constants{
     public static double kP = 0.01;
     public static double INCHES_PER_TICK = 113.288/120;
 
-    public static double LL_TARGET_AREA = 10;
+    public static double LL_TARGET_AREA = 9.7;
 
     public Constants() {
     }
