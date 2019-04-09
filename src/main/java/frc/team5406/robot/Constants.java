@@ -32,11 +32,11 @@ public final class Constants{
     public static int ELEVATOR_START = -1400;*/
     //2.7 rev/in
     public static double CARGO_LEVEL_1 = -4.74609375;
-    public static double CARGO_LEVEL_2 = -49.703125;
-    public static double CARGO_LEVEL_3 = -85.1044921875;
-    public static double HATCH_LEVEL_1 = -16;
-    public static double HATCH_LEVEL_2 = -55;
-    public static double HATCH_LEVEL_3 = -87.1142578125;
+    public static double CARGO_LEVEL_2 = -48.35;
+    public static double CARGO_LEVEL_3 = -83.75;
+    public static double HATCH_LEVEL_1 = -14.65;
+    public static double HATCH_LEVEL_2 = -53.65;
+    public static double HATCH_LEVEL_3 = -85.75;
     
     public static double ELEVATOR_CARGO_BOX = -24.31640625;
     public static double ELEVATOR_CLIMB = 54;
