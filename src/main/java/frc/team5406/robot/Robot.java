@@ -82,10 +82,11 @@ public class Robot extends TimedRobot implements PIDOutput  {
     PathGenerator pathGenerator = new PathGenerator(Constants.spacing, true);
     pathGenerator.addPoint(new Vector(0, 0));
     pathGenerator.addPoint(new Vector(0, 66));
-    pathGenerator.addPoint(new Vector(51, 114));
-    pathGenerator.addPoint(new Vector(70, 139));
+    pathGenerator.addPoint(new Vector(-30, 100));
+    pathGenerator.addPoint(new Vector(-30, 120));
+    pathGenerator.addPoint(new Vector(-28, 140));
     pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
-    pathGenerator.setVelocities(Constants.maxVel, 40, Constants.maxVelk, 25);
+    pathGenerator.setVelocities(Constants.maxVel, 40, Constants.maxVelk, 30);
     Path path = pathGenerator.generatePath();
     List<Path> paths = new ArrayList<Path>();
     paths.add(path);
@@ -193,7 +194,7 @@ autoLimelightTracking();
         if (llHasValidTarget) {
           System.out.println ("Limelight area: " + llArea);
           robotDrive.setVelocityClosedLoop(50*(llDrive + llDrive*llSteer*0.5), 50*(llDrive - llDrive*llSteer*0.5));
-          if (llArea > robotDrive.maxllArea(robotDrive.getRotationAngle().degrees())) {
+          if (llArea > Constants.LL_TARGET_AREA-2) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
             autoStep++;
@@ -229,10 +230,13 @@ autoLimelightTracking();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
         //pathGenerator.addPoint(new Vector(90, 60));
         //pathGenerator.addPoint(new Vector(90, 50));
-        pathGenerator.addPoint(new Vector(83, 154)); //81, 172
+        pathGenerator.addPoint(new Vector(-15, 130)); //81, 172
+        pathGenerator.addPoint(new Vector(70, 110)); //81, 172
+        pathGenerator.addPoint(new Vector(75, 90)); //81, 172
+        pathGenerator.addPoint(new Vector(80, 50)); //81, 172
 
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
-        pathGenerator.setVelocities(Constants.maxVel, 50, Constants.maxVelk, -50);
+        pathGenerator.setVelocities(Constants.maxVel, 50, Constants.maxVelk, 0);
         Path path2 = pathGenerator.generatePath();
         paths.add(path2);
         purePursuitTracker.setPaths(paths, Constants.lookaheadDistance);
@@ -248,81 +252,47 @@ autoLimelightTracking();
       break;
     case 5:
       // Drive towards feeder station (hatch fowards)
+     
+      // Drive to cargo line (hatch backwards)
+      System.out.println(autoStep + " - Finding Target " +  (Timer.getFPGATimestamp()-startTime));
+       
       if (purePursuitTracker.isDone()) {
         gamepieceHandler.hatchGrip();
-        System.out.println(autoStep + " - turn around" +  (Timer.getFPGATimestamp()-startTime));
-        turnController.setSetpoint(179.9);
-        turnController.enable();
-        SmartDashboard.putNumber("TurningAngle", Constants.navX.getAngle());
-        SmartDashboard.putNumber("rotateToAngleRate", rotateToAngleRate);
+        autoLimelightTracking();
 
-        if (turnController.onTarget()) {
-          System.out.println("Done Turning");
-          turnController.disable();
-          rotateToAngleRate = 0;
-          turnController.reset();
-          turnController.close();
-          autoStep++;
-          robotDrive.setVelocityClosedLoop(20, 20);
-        } else {
-          System.out.println(rotateToAngleRate);
-          robotDrive.setVelocityClosedLoop(rotateToAngleRate * 50, -rotateToAngleRate * 50);
-        }
-
-      }
-
-      break;
-      case 6:
-      {
-      // Back away from rocket, (hatch backwards)
-        System.out.println(autoStep + " - Drive towards feeder station" +  (Timer.getFPGATimestamp()-startTime));
-
-        PathGenerator pathGenerator = new PathGenerator(Constants.spacing, true);
-        List<Path> paths = new ArrayList<Path>();
-        pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
-        pathGenerator.addPoint(new Vector(94, 80));
-        pathGenerator.addPoint(new Vector(94, 60));
-
-        pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
-        pathGenerator.setVelocities(Constants.maxVel, 50, Constants.maxVelk, 35);
-        Path path2 = pathGenerator.generatePath();
-        paths.add(path2);
-        purePursuitTracker.setPaths(paths, Constants.lookaheadDistance);
-        purePursuitTracker.setPath(0);
-        autoCount++;
-        purePursuitTracker.reset();
-        autoModeExecuter = new AutoModeExecuter();
-        autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
-        autoModeExecuter.start();
-        gamepieceHandler.hatchRetract();
-        visionTurn = false;
-        autoStep++;
-    }
-      break;
-
-      case 7:
-      if (purePursuitTracker.isDone()) {
-autoLimelightTracking();
         if (llHasValidTarget) {
-          autoStep++;
-        }else if(!visionTurn){
-          visionTurn = true;
-          double tx0 = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx0").getDouble(0);
-          if (tx0 < 0){
-            robotDrive.setVelocityClosedLoop(-10, 10);
-          }else if(tx0 > 0){
-            robotDrive.setVelocityClosedLoop(10, -10);
-          }else if(Constants.navX.getAngle() - 90 > 0){
-            robotDrive.setVelocityClosedLoop(10, -10);
-          }else{
-            robotDrive.setVelocityClosedLoop(-10, 10);
+
+          System.out.println ("dr: " + llDrive + ", st: " + llSteer);
+          robotDrive.setVelocityClosedLoop(-30*(llSteer), 30*(llSteer));
+          if (Math.abs(llSteer) <0.25) {
+            robotDrive.setVelocityClosedLoop(0, 0);
+            autoCount =0;
+            autoStep++;
           }
+        
+        }else {
+          turnController.setSetpoint(179.9);
+          turnController.enable();
+          System.out.println(Constants.navX.getAngle());
+          SmartDashboard.putNumber("TurningAngle", Constants.navX.getAngle());
+          SmartDashboard.putNumber("rotateToAngleRate", rotateToAngleRate);
+  
+          if (turnController.onTarget()) {
+            System.out.println("Done Turning");
+            turnController.disable();
+            rotateToAngleRate = 0;
+            turnController.reset();
+            robotDrive.setVelocityClosedLoop(15, 15);
+          } else {
+            System.out.println(rotateToAngleRate);
+            robotDrive.setVelocityClosedLoop(rotateToAngleRate * 50, -rotateToAngleRate * 50);
+          }          }
 
-        }
       }
-
-        break;
-      case 8:
+    
+      break;
+      
+      case 6:
       // Hatch extend, vision drive to feeder station (hatch forwards)
       
         System.out.println(autoStep + " - Near feeder station" +  (Timer.getFPGATimestamp()-startTime));
@@ -339,7 +309,7 @@ autoLimelightTracking();
         }
      
       break;
-    case 9:
+    case 7:
         autoCount++;
         System.out.println(autoStep + " -Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
         if(autoCount >= 11){
@@ -352,16 +322,14 @@ autoLimelightTracking();
           robotDrive.setVelocityClosedLoop(20-autoCount*2, 20-autoCount*2);
         }
         break;
-    case 10:
+    case 8:
       // Drive to cargo line (hatch backwards)
        { System.out.println(autoStep + " - At feeder station" +  (Timer.getFPGATimestamp()-startTime));
        gamepieceHandler.hatchRetract();
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
         List<Path> paths = new ArrayList<Path>();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
-        pathGenerator.addPoint(new Vector(70, 210));
-        pathGenerator.addPoint(new Vector(80, 245));
-        pathGenerator.addPoint(new Vector(80, 265));
+        pathGenerator.addPoint(new Vector(40, 230));
         //pathGenerator.addPoint(new Vector(40, 265));
 
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
@@ -376,7 +344,7 @@ autoLimelightTracking();
         autoModeExecuter.start();
         autoStep++;}
       break;
-      case 11:
+      case 9:
       // Drive to cargo line (hatch backwards)
       System.out.println(autoStep + " - Finding Target " +  (Timer.getFPGATimestamp()-startTime));
        
@@ -388,14 +356,14 @@ autoLimelightTracking();
 
           System.out.println ("dr: " + llDrive + ", st: " + llSteer);
           robotDrive.setVelocityClosedLoop(-50*(llSteer), 50*(llSteer));
-          if (llSteer <0.1) {
-            robotDrive.setVelocityClosedLoop(0, 0);
+          if (llSteer <0.25) {
+            robotDrive.setVelocityClosedLoop(10, 10);
             autoCount =0;
             autoStep++;
           }
         
         }else {
-          rocketTurnController.setSetpoint(145);
+          rocketTurnController.setSetpoint(-90);
           rocketTurnController.enable();
           System.out.println(Constants.navX.getAngle());
           SmartDashboard.putNumber("TurningAngle", Constants.navX.getAngle());
@@ -416,7 +384,7 @@ autoLimelightTracking();
       break;
 
       
-      case 12:
+      case 10:
       // Hatch extend, vision drive to rocket (hatch forwards)
         gamepieceHandler.hatchExtend();
         System.out.println(autoStep + " - Near backside of rocket" +  (Timer.getFPGATimestamp()-startTime));
@@ -429,7 +397,7 @@ autoLimelightTracking();
           lastllDrive = llDrive;
           System.out.println ("dr: " + llDrive + ", st: " + llSteer);
           robotDrive.setVelocityClosedLoop(50*(llDrive + llDrive*llSteer*0.3), 50*(llDrive - llDrive*llSteer*0.3));
-          if (llArea > Constants.LL_TARGET_AREA-1) {
+          if (llArea > Constants.LL_TARGET_AREA-2) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
             autoStep++;
@@ -437,7 +405,7 @@ autoLimelightTracking();
         
       }
       break;
-    case 13:
+    case 11:
         autoCount++;
         System.out.println(autoStep + " - Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
         if(autoCount > 5){
@@ -448,7 +416,7 @@ autoLimelightTracking();
           lastllDrive = 0;
           llLastError = 0;
           llTotalError = 0;
-          autoStep++;
+          autoStep=100;
         }else{
           robotDrive.setVelocityClosedLoop(20-autoCount*2, 20-autoCount*2);
         }
