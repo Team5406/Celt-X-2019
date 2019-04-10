@@ -246,7 +246,7 @@ public class Drive extends DriveTrainBase {
         }
 
           public double maxllArea(double angle){
-   return -0.0054*angle*angle + 0.6546*angle - 11.084;
+   return -0.0054*angle*angle + 0.6546*angle - 12.084;
   }
       
 }
