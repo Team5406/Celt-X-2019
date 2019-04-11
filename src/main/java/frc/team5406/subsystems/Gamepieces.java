@@ -68,9 +68,9 @@ public class Gamepieces extends Subsystems{
     intakeMotorSlave.follow(intakeMotor);
 
     // set PID coefficients
-    elevatorPID.setP(3e-5, 0);
+    elevatorPID.setP(6e-5, 0);
     elevatorPID.setI(1e-6, 0);
-    elevatorPID.setD(0.0015, 0);
+    elevatorPID.setD(0.001, 0);
     elevatorPID.setIZone(0, 0);
     elevatorPID.setFF(0.000156, 0);
     elevatorPID.setOutputRange(-1, 1, 0);
@@ -89,7 +89,7 @@ public class Gamepieces extends Subsystems{
 
     elevatorPID.setSmartMotionMaxVelocity(30000, 0); //2500
     elevatorPID.setSmartMotionMinOutputVelocity(0, 0);
-    elevatorPID.setSmartMotionMaxAccel(10000, 0);
+    elevatorPID.setSmartMotionMaxAccel(9000, 0);
     elevatorPID.setSmartMotionAllowedClosedLoopError(0.2, 0);
 
     // set PID coefficients

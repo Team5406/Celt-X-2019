@@ -34,9 +34,9 @@ public final class Constants{
     public static double CARGO_LEVEL_1 = -4.74609375;
     public static double CARGO_LEVEL_2 = -48.35;
     public static double CARGO_LEVEL_3 = -83.75;
-    public static double HATCH_LEVEL_1 = -14.65;
-    public static double HATCH_LEVEL_2 = -53.65;
-    public static double HATCH_LEVEL_3 = -85.75;
+    public static double HATCH_LEVEL_1 = -15.15;
+    public static double HATCH_LEVEL_2 = -54.15;
+    public static double HATCH_LEVEL_3 = -86.25;
     
     public static double ELEVATOR_CARGO_BOX = -24.31640625;
     public static double ELEVATOR_CLIMB = 54;
