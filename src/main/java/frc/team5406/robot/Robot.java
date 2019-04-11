@@ -52,6 +52,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
   double llTotalError = 0;
   boolean llHasValidTarget = false;
   boolean cancelAuto = false;
+  boolean visionTurn = false;
 
   XboxController driverGamepad = new XboxController(1);
   XboxController operatorGamepad = new XboxController(0);
@@ -129,6 +130,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
     cancelAuto = false;
+    visionTurn = false;
 
   }
 
@@ -161,29 +163,52 @@ public class Robot extends TimedRobot implements PIDOutput  {
 
     switch (autoStep) {
     case 1:
+    if (purePursuitTracker.isDone()) {
+autoLimelightTracking();
+        if (llHasValidTarget) {
+          autoStep++;
+        }else if(!visionTurn){
+          visionTurn = true;
+          double tx0 = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx0").getDouble(0);
+          if (tx0 < 0){
+            robotDrive.setVelocityClosedLoop(-10, 10); //counterclockwise
+          }else if(tx0 > 0){
+            robotDrive.setVelocityClosedLoop(10, -10); //clockwise
+          }else if(Constants.navX.getAngle() - 90 > 0){
+            robotDrive.setVelocityClosedLoop(10, -10); //clockwise
+          }else{
+            robotDrive.setVelocityClosedLoop(-10, 10); //counterclockwise
+          }
+
+        }
+      }
+
+        break;
+        
+    case 2:
       /*System.out.println("X: " + poseEstimator.getPose().x + ", Y: " + poseEstimator.getPose().y + ", vL: "
           + driveTrain.getLeftVelocity() + ", vR: " + driveTrain.getRightVelocity() + ", angle: "
           + driveTrain.getRotationAngle().degrees());
 */
       // At rocket, extend hatch mech, vision drive in (hatch fowards)
-      if (purePursuitTracker.isDone()) {
+{
         System.out.println(autoStep + " - Drove to Rocket " +  (Timer.getFPGATimestamp()-startTime));
         gamepieceHandler.hatchExtend();
         autoLimelightTracking();
         if (llHasValidTarget) {
-          //System.out.println ("dr: " + llDrive + ", st: " + llSteer);
+          System.out.println ("Limelight area: " + llArea);
           robotDrive.setVelocityClosedLoop(50*(llDrive + llDrive*llSteer*0.5), 50*(llDrive - llDrive*llSteer*0.5));
           if (llArea > robotDrive.maxllArea(robotDrive.getRotationAngle().degrees())) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
-            autoStep=2;
+            autoStep++;
           }
         }
         //driveTrain.setVelocityClosedLoop(25, 25);
-
       }
+      
       break;
-    case 2:
+    case 3:
         autoCount++;
         System.out.println(autoStep + " - Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
         if(autoCount > 5){
@@ -196,16 +221,15 @@ public class Robot extends TimedRobot implements PIDOutput  {
           llTotalError = 0;
           llSteer = 0;
           llDrive = 0;
-          autoStep=3;
+          autoStep++;
 
         }else{
           robotDrive.setVelocityClosedLoop(20-autoCount*0.8, 20-autoCount*0.8);
         }
         break;
-      case 3:
+      case 4:
       // Back away from rocket, (hatch backwards)
-      if (purePursuitTracker.isDone()) { // change this line
-        System.out.println(autoStep + " - First Panel Delivered" +  (Timer.getFPGATimestamp()-startTime));
+      {  System.out.println(autoStep + " - First Panel Delivered" +  (Timer.getFPGATimestamp()-startTime));
 
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
         List<Path> paths = new ArrayList<Path>();
@@ -226,10 +250,10 @@ public class Robot extends TimedRobot implements PIDOutput  {
         autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
         autoModeExecuter.start();
         gamepieceHandler.hatchRetract();
-        autoStep = 4;
+        autoStep++;
       }
       break;
-    case 4:
+    case 5:
       // Drive towards feeder station (hatch fowards)
       if (purePursuitTracker.isDone()) {
         gamepieceHandler.hatchGrip();
@@ -245,7 +269,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
           rotateToAngleRate = 0;
           turnController.reset();
           turnController.close();
-          autoStep = 5;
+          autoStep++;
           robotDrive.setVelocityClosedLoop(20, 20);
         } else {
           System.out.println(rotateToAngleRate);
@@ -255,7 +279,7 @@ public class Robot extends TimedRobot implements PIDOutput  {
       }
 
       break;
-      case 5:
+      case 6:
       {
       // Back away from rocket, (hatch backwards)
         System.out.println(autoStep + " - Drive towards feeder station" +  (Timer.getFPGATimestamp()-startTime));
@@ -278,12 +302,36 @@ public class Robot extends TimedRobot implements PIDOutput  {
         autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
         autoModeExecuter.start();
         gamepieceHandler.hatchRetract();
-        autoStep = 6;
+        visionTurn = false;
+        autoStep++;
     }
       break;
-      case 6:
-      // Hatch extend, vision drive to feeder station (hatch forwards)
+
+      case 7:
       if (purePursuitTracker.isDone()) {
+autoLimelightTracking();
+        if (llHasValidTarget) {
+          autoStep++;
+        }else if(!visionTurn){
+          visionTurn = true;
+          double tx0 = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx0").getDouble(0);
+          if (tx0 < 0){
+            robotDrive.setVelocityClosedLoop(-10, 10);
+          }else if(tx0 > 0){
+            robotDrive.setVelocityClosedLoop(10, -10);
+          }else if(Constants.navX.getAngle() - 90 > 0){
+            robotDrive.setVelocityClosedLoop(10, -10);
+          }else{
+            robotDrive.setVelocityClosedLoop(-10, 10);
+          }
+
+        }
+      }
+
+        break;
+      case 8:
+      // Hatch extend, vision drive to feeder station (hatch forwards)
+      
         System.out.println(autoStep + " - Near feeder station" +  (Timer.getFPGATimestamp()-startTime));
         autoLimelightTracking();
         gamepieceHandler.hatchExtend();
@@ -293,12 +341,12 @@ public class Robot extends TimedRobot implements PIDOutput  {
           if (llArea > Constants.LL_TARGET_AREA) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
-            autoStep=7;
+            autoStep++;
           }
         }
-     }
+     
       break;
-    case 7:
+    case 9:
         autoCount++;
         System.out.println(autoStep + " -Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
         if(autoCount >= 11){
@@ -306,24 +354,24 @@ public class Robot extends TimedRobot implements PIDOutput  {
           lastllDrive = 0;
           llLastError = 0;
           llTotalError = 0;
-          autoStep=8;
+          autoStep++;
         }else{
           robotDrive.setVelocityClosedLoop(20-autoCount*2, 20-autoCount*2);
         }
         break;
-    case 8:
+    case 10:
       // Drive to cargo line (hatch backwards)
        { System.out.println(autoStep + " - At feeder station" +  (Timer.getFPGATimestamp()-startTime));
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
         List<Path> paths = new ArrayList<Path>();
         pathGenerator.addPoint(new Vector(poseEstimator.getPose().x, poseEstimator.getPose().y));
         pathGenerator.addPoint(new Vector(70, 210));
-        pathGenerator.addPoint(new Vector(70, 245));
-        pathGenerator.addPoint(new Vector(70, 272));
+        pathGenerator.addPoint(new Vector(80, 245));
+        pathGenerator.addPoint(new Vector(80, 265));
         //pathGenerator.addPoint(new Vector(40, 265));
 
         pathGenerator.setSmoothingParameters(Constants.a, Constants.b, Constants.tolerance);
-        pathGenerator.setVelocities(Constants.maxVel, 50, Constants.maxVelk, 0);
+        pathGenerator.setVelocities(150, 50, Constants.maxVelk, -10);
         Path path2 = pathGenerator.generatePath();
         paths.add(path2);
         purePursuitTracker.setPaths(paths, 18);
@@ -332,44 +380,61 @@ public class Robot extends TimedRobot implements PIDOutput  {
         autoModeExecuter = new AutoModeExecuter();
         autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
         autoModeExecuter.start();
-        autoStep = 9;
+        autoStep++;
         autoCount = 0;}
       break;
-      case 9:
+      case 11:
       // Drive to cargo line (hatch backwards)
-      if(autoCount > 40){
+      autoCount++;
+      if(autoCount > 30){
         gamepieceHandler.hatchRetract();
       }
+      System.out.println(autoStep + " - Finding Target " +  (Timer.getFPGATimestamp()-startTime));
+       
       if (purePursuitTracker.isDone()) {
-        System.out.println(autoStep + " - turn around" +  (Timer.getFPGATimestamp()-startTime));
-        rocketTurnController.setSetpoint(150);
-        rocketTurnController.enable();
-        System.out.println(Constants.navX.getAngle());
-        SmartDashboard.putNumber("TurningAngle", Constants.navX.getAngle());
-        SmartDashboard.putNumber("rotateToAngleRate", rotateToAngleRate);
+        gamepieceHandler.hatchGrip();
+        autoLimelightTracking();
 
-        if (rocketTurnController.onTarget()) {
-          System.out.println("Done Turning");
-          rocketTurnController.disable();
-          rotateToAngleRate = 0;
-          rocketTurnController.reset();
-          autoStep = 10;
-          robotDrive.setVelocityClosedLoop(0, 0);
-        } else {
-          System.out.println(rotateToAngleRate);
-          robotDrive.setVelocityClosedLoop(rotateToAngleRate * 50, -rotateToAngleRate * 50);
-        }
+        if (llHasValidTarget) {
+
+          System.out.println ("dr: " + llDrive + ", st: " + llSteer);
+          robotDrive.setVelocityClosedLoop(-50*(llSteer), 50*(llSteer));
+          if (llSteer <0.1) {
+            robotDrive.setVelocityClosedLoop(0, 0);
+            autoCount =0;
+            autoStep++;
+          }
+        
+        }else {
+          rocketTurnController.setSetpoint(145);
+          rocketTurnController.enable();
+          System.out.println(Constants.navX.getAngle());
+          SmartDashboard.putNumber("TurningAngle", Constants.navX.getAngle());
+          SmartDashboard.putNumber("rotateToAngleRate", rotateToAngleRate);
+  
+          if (rocketTurnController.onTarget()) {
+            System.out.println("Done Turning");
+            rocketTurnController.disable();
+            rotateToAngleRate = 0;
+            rocketTurnController.reset();
+            robotDrive.setVelocityClosedLoop(0, 0);
+          } else {
+            System.out.println(rotateToAngleRate);
+            robotDrive.setVelocityClosedLoop(rotateToAngleRate * 50, -rotateToAngleRate * 50);
+          }          }
 
       }
       break;
-      case 10:
+
+      
+      case 12:
       // Hatch extend, vision drive to rocket (hatch forwards)
         gamepieceHandler.hatchExtend();
         System.out.println(autoStep + " - Near backside of rocket" +  (Timer.getFPGATimestamp()-startTime));
         autoLimelightTracking();
         if (llHasValidTarget) {
-          if ((llDrive - lastllDrive) > 0.02){
-            lastllDrive += 0.02;
+          if ((llDrive - lastllDrive) > 0.05){
+            lastllDrive += 0.05;
             llDrive = lastllDrive;
           }
           lastllDrive = llDrive;
@@ -378,12 +443,12 @@ public class Robot extends TimedRobot implements PIDOutput  {
           if (llArea > Constants.LL_TARGET_AREA-0.7) {
             robotDrive.setVelocityClosedLoop(20, 20);
             autoCount =0;
-            autoStep=11;
+            autoStep++;
           }
         
       }
       break;
-    case 11:
+    case 13:
         autoCount++;
         System.out.println(autoStep + " - Extra Driving" +  (Timer.getFPGATimestamp()-startTime));
         if(autoCount > 5){
@@ -394,12 +459,12 @@ public class Robot extends TimedRobot implements PIDOutput  {
           lastllDrive = 0;
           llLastError = 0;
           llTotalError = 0;
-          autoStep=12;
+          autoStep++;
         }else{
           robotDrive.setVelocityClosedLoop(20-autoCount*2, 20-autoCount*2);
         }
         break;
-    case 12:
+    case 14:
       // drive to cargo ship
         {System.out.println(autoStep + " - 2nd panel delivered" +  (Timer.getFPGATimestamp()-startTime));
         PathGenerator pathGenerator = new PathGenerator(Constants.spacing, false);
@@ -418,13 +483,13 @@ public class Robot extends TimedRobot implements PIDOutput  {
         autoModeExecuter = new AutoModeExecuter();
         autoModeExecuter.setAutoMode(new PurePursuitTestMode(0));
         autoModeExecuter.start();
-        autoStep = 13;}
+        autoStep++;}
       
-    case 13:
+    case 15:
       // drive to cargo ship
       if (purePursuitTracker.isDone()) {
         System.out.println(autoStep + " - Auto done. Waiting for cargo near cargo ship" +  (Timer.getFPGATimestamp()-startTime));
-        autoStep = 14;
+        autoStep++;
       }
 
     }
@@ -799,7 +864,7 @@ if (climbCount > 0){
     final double STEER_KP = 0.08; // how hard to turn toward the target
     final double STEER_KD = 0;//0.005;
     final double STEER_KI = 0;//0.1;
-    final double MAX_DRIVE = 0.7; // Simple speed limit so we don't drive too fast
+    final double MAX_DRIVE = 0.8; // Simple speed limit so we don't drive too fast
 
     if (tv < 1.0) {
       llHasValidTarget = false;
