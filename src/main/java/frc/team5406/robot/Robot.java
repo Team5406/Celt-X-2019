@@ -599,6 +599,7 @@ autoLimelightTracking();
     robotDrive.setVelocityClosedLoop(0, 0);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+    gamepieceHandler.compressorEnabled();
 
   }
 
